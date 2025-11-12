@@ -1,13 +1,7 @@
 const { Pool } = require('pg');
+require('dotenv').config();
 
-const pool = new Pool({
-    user: 'postgres',
-    password: 'one',
-    host: 'localhost',
-    port: 5432,
-    database: 'ekatte_1',
-});
-
+const pool = new Pool();
 
 const query = async (text, params) => {
     try {
@@ -18,9 +12,7 @@ const query = async (text, params) => {
         return res;
     } catch (err) {
         console.error('Query failed:', err);
-        throw err;
     }
-
 }
 
 const end = async () => {
