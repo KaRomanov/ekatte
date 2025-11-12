@@ -1,4 +1,4 @@
-const downloadFiles = require('./downloadFiles');
+const {downloadFiles} = require('./downloadFiles');
 const populateDB = require('./updateDB');
 
 const files = [
@@ -10,8 +10,13 @@ const files = [
 
 (async () => {
     try {
+        //const start = Date.now();
+
         await downloadFiles(files); 
-        await populateDB();          
+        await populateDB();   
+
+        //const end = Date.now(); 
+        //console.log(`Finished in ${(end - start) / 1000} seconds`);
     } catch (err) {
         console.error('Error:', err);
     }

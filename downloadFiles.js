@@ -1,40 +1,22 @@
-const https = require('https');
-const fs = require('fs');
+const fs = require('fs').promises;
 
-const getFile = (fileURL, fileDest) => {
-    return new Promise((resolve, reject) => {
+async function getFile(url, dest) {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        const file = fs.createWriteStream(fileDest);
-
-        file.on('error', (err) => {
-            fs.unlink(fileDest, () => reject(err));
-        });
-
-        https.get(fileURL, (response) => {
-
-            if (response.statusCode !== 200) {
-                fs.unlink(fileDest, () => reject(new Error(`HTTP error ${response.statusCode}`)));
-                return;
-            }
-
-            response.pipe(file);
-
-            file.on('finish', () => {
-                file.close(() => resolve());
-            });
-
-        }).on('error', (err) => {
-
-            fs.unlink(fileDest, () => reject(err));
-        });
-    });
+    const text = await res.text();
+    await fs.writeFile(dest, text);
+    console.log('Downloaded file: ', dest);
 }
 
 const downloadFiles = async (files) => {
-    for (const { fileUrl, fileDest } of files) {//try catch
-        await getFile(fileUrl, fileDest);
-        console.log(`Downloaded file: ${fileUrl}`);
+    for (const { fileUrl, fileDest } of files) {
+        try {
+            await getFile(fileUrl, fileDest);
+        } catch (err) {
+            console.log('Download failed: ', err);
+        }
     }
 }
 
-module.exports = downloadFiles;
+module.exports = { getFile, downloadFiles };
