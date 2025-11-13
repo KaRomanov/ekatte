@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 
-export async function getFile(url, dest) {
+export const getFile = async (url, dest) => {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 

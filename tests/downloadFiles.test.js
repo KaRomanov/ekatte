@@ -1,10 +1,14 @@
-const fs = require('fs').promises;
-const { getFile, downloadFiles } = require('../downloadFiles');
-require('jest-fetch-mock').enableMocks();
+import { jest, test, expect, beforeEach} from '@jest/globals';
+import fs from 'fs/promises';
+import { getFile, downloadFiles } from '../downloadFiles.js';
+import fetchMock from 'jest-fetch-mock';
+
+fetchMock.enableMocks();
 
 beforeEach(() => {
     fetch.resetMocks();
 });
+
 
 describe('getFile', () => {
     it('writes fetched content to a file', async () => {
