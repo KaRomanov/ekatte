@@ -1,9 +1,10 @@
-const db = require('./db/index.js')
+import * as db from './db/index.js';
+import fs from 'fs/promises';
 
-const loadJsonFile = (filePath) => {
+async function loadJsonFile(filePath) {
     try {
-        const data = require(filePath);
-        return data;
+        const data = await fs.readFile(filePath);
+        return JSON.parse(data);
     } catch (err) {
         throw new Error(`Not a valid json file: ${filePath} - ${err.message}`);
     }
@@ -11,7 +12,7 @@ const loadJsonFile = (filePath) => {
 
 async function insertRegions() {
 
-    const regions = loadJsonFile('./src/regions.json');
+    const regions = await loadJsonFile('./src/regions.json');
 
     const validData = regions.filter(r => r.oblast && r.name && r.name_en && r.ekatte)
         .map(r => ({
@@ -37,7 +38,7 @@ async function insertRegions() {
 
 async function insertMunicipalities() {
 
-    const municipalities = loadJsonFile('./src/municipalities.json');
+    const municipalities = await loadJsonFile('./src/municipalities.json');
 
     const validData = municipalities.filter(m => m.obshtina && m.name && m.name_en && m.ekatte)
         .map(m => ({
@@ -63,7 +64,7 @@ async function insertMunicipalities() {
 
 async function insertTownhalls() {
 
-    const townhalls = loadJsonFile('./src/townhalls.json');
+    const townhalls = await loadJsonFile('./src/townhalls.json');
 
     const validData = townhalls.filter(th => th.kmetstvo && th.name && th.name_en && th.ekatte)
         .map(th => ({
@@ -89,7 +90,7 @@ async function insertTownhalls() {
 
 
 async function insertTowns() {
-    const towns = loadJsonFile('./src/towns.json');
+    const towns = await loadJsonFile('./src/towns.json');
 
     const validData = towns.filter(t => t.ekatte && t.t_v_m && t.name && t.name_en && t.kmetstvo && t.obshtina)
         .map(t => {
@@ -121,7 +122,7 @@ async function insertTowns() {
     }
 }
 
-const populateDB = async () => {
+export const populateDB = async () => {
     try {
 
         await db.query('BEGIN');
@@ -156,5 +157,3 @@ const populateDB = async () => {
         await db.end();
     }
 }
-
-module.exports = populateDB;

@@ -1,9 +1,10 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+import { Pool } from 'pg';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const pool = new Pool();
 
-const query = async (text, params) => {
+export const query = async (text, params) => {
     try {
         //const start = Date.now();
         const res = await pool.query(text, params);
@@ -15,8 +16,6 @@ const query = async (text, params) => {
     }
 }
 
-const end = async () => {
+export const end = async () => {
     await pool.end();
 }
-
-module.exports = { query, end };

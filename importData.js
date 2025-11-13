@@ -1,5 +1,5 @@
-const {downloadFiles} = require('./downloadFiles');
-const populateDB = require('./updateDB');
+import { downloadFiles } from './downloadFiles.js';
+import { populateDB } from './updateDB.js';
 
 const files = [
     { fileUrl: 'https://www.nsi.bg/nrnm/ekatte/territorial-units/json', fileDest: './src/towns.json' },
@@ -12,8 +12,8 @@ const files = [
     try {
         //const start = Date.now();
 
-        await downloadFiles(files); 
-        await populateDB();   
+        await downloadFiles(files);
+        await populateDB();
 
         //const end = Date.now(); 
         //console.log(`Finished in ${(end - start) / 1000} seconds`);

@@ -1,6 +1,6 @@
-const fs = require('fs').promises;
+import fs from 'fs/promises';
 
-async function getFile(url, dest) {
+export async function getFile(url, dest) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -9,7 +9,7 @@ async function getFile(url, dest) {
     console.log('Downloaded file: ', dest);
 }
 
-const downloadFiles = async (files) => {
+export const downloadFiles = async (files) => {
     for (const { fileUrl, fileDest } of files) {
         try {
             await getFile(fileUrl, fileDest);
@@ -19,4 +19,3 @@ const downloadFiles = async (files) => {
     }
 }
 
-module.exports = { getFile, downloadFiles };
