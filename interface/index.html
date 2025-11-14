@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Ekatte</title>
+</head>
+
+<body>
+
+    <div id="form-body">
+        <form id="search-form">
+            <label>
+                ID (ekatte):
+                <input type="text" name="ekatte" id="ekatte">
+            </label>
+
+            <label>
+                Име на населено място:
+                <input type="text" name="town" id="town">
+            </label>
+
+            <label>
+                Област:
+                <input type="text" name="region" id="region">
+            </label>
+
+            <label>
+                Община:
+                <input type="text" name="municipality" id="municipality">
+            </label>
+
+            <label>
+                Кметство:
+                <input type="text" name="townhall" id="townhall">
+            </label>
+
+            <div class="button-row">
+                <button type="submit">Търси</button>
+                <button type="reset">Нулирай търсенето</button>
+            </div>
+        </form>
+    </div>
+
+
+    <div id="stats-body">
+        <div class="stat-item">Брой селища: <span id="towns-count">0</span></div>
+        <div class="stat-item">Брой кметства: <span id="townhalls-count">0</span></div>
+        <div class="stat-item">Брой общини: <span id="municipalities-count">0</span></div>
+        <div class="stat-item">Брой региони: <span id="regions-count">0</span></div>
+    </div>
+
+
+    <div id="table-body">
+        <table id="table">
+            <tr>
+                <th>ID (ekatte)</th>
+                <th>Селище</th>
+                <th>Кметство</th>
+                <th>Община</th>
+                <th>Област</th>
+            </tr>
+
+        </table>
+    </div>
+</body>
+
+</html>

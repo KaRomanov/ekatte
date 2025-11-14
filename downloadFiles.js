@@ -1,4 +1,5 @@
 import fs from 'fs/promises';
+import { fileURLToPath } from 'url';
 
 export const getFile = async (url, dest) => {
 
@@ -27,12 +28,14 @@ export const getFile = async (url, dest) => {
 }
 
 export const downloadFiles = async (files) => {
-    for (const { fileUrl, fileDest } of files) {
+
+    await Promise.all(files.map(async ({ fileUrl, fileDest }) => {
         try {
             await getFile(fileUrl, fileDest);
         } catch (err) {
             console.error('Download failed: ', err.message);
             throw new Error(`Download failed ${fileDest}`);
         }
-    }
+    }));
+
 }
