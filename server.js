@@ -1,6 +1,6 @@
 import http from 'http';
 import url from 'url';
-import { getTownJson } from './serverFunctions.js';
+import { getTownsByName, getTablesRowCounts } from './serverFunctions.js';
 
 const server = http.createServer();
 const PORT = 3000;
@@ -23,10 +23,21 @@ server.on('request', async (req, res) => {
         const name = parsedURL.query.name || '';
 
         try{
-            const data = await getTownJson(name);
+            const data = await getTownsByName(name);
             res.setHeader('Content-Type', 'application/json');
             return res.end(JSON.stringify(data));
         }catch (err){
+            console.error(err);
+            return res.statusCode = 500, res.end();
+        }
+    }
+
+    if(pathName === '/tables'){
+        try{
+            const data = await getTablesRowCounts();
+            res.setHeader('Content-Type', 'application/json');
+            return res.end(JSON.stringify(data));
+        }catch(err){
             console.error(err);
             return res.statusCode = 500, res.end();
         }

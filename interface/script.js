@@ -43,14 +43,21 @@ function populateTable(data) {
     }
 }
 
+function addRowCounts(rowCounts) {
+    document.getElementById('towns-count').textContent = rowCounts.towns;
+    document.getElementById('townhalls-count').textContent = rowCounts.townhalls;
+    document.getElementById('municipalities-count').textContent = rowCounts.municipalities;
+    document.getElementById('regions-count').textContent = rowCounts.regions;
+}
+
+
 document.addEventListener('DOMContentLoaded', async () => {
 
-
     try {
-
         const data = await (await fetch(HOST + '/towns')).json();
+        const rowCounts = await (await fetch(HOST + '/tables')).json();
         populateTable(data);
-
+        addRowCounts(rowCounts);
     } catch (err) {
         console.error('Error fetching data:', err);
         const tr = document.createElement('tr');
@@ -62,6 +69,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         table.appendChild(tr);
     }
 
-
-
-})
+});

@@ -1,6 +1,6 @@
 import * as db from './db/index.js';
 
-export const getTownJson = async (str) => {
+export const getTownsByName = async (str) => {
     const query = `SELECT t.id, t.type,t.name_bg as town, th.name_bg as townhall, m.name_bg as municipality, r.name_bg as region
         FROM towns t LEFT JOIN townhalls th ON t.townhall_id = th.id
 	    JOIN municipalities m ON t.municipality_id = m.id
@@ -24,4 +24,26 @@ export const getTownJson = async (str) => {
     }
 }
 
-//getTownJson('varn');
+
+const getRowCount = async (table) => {
+    try {
+        const res = await db.query(`SELECT COUNT(*) FROM ${table}`);
+        return res.rows[0].count;
+    } catch (err) {
+        console.error(err);
+        return 0;
+    }
+};
+
+export const getTablesRowCounts = async () => {
+    const tables = ['towns', 'municipalities', 'townhalls', 'regions'];
+
+    const result = {};
+
+    for (const table of tables) {
+        const num = await getRowCount(table);
+        result[table] = num;
+    }
+
+    return result;
+};
