@@ -106,7 +106,6 @@ body {
 
 .stat-item span {
     background: #8ea6b1;
-    /* muted blue */
     color: white;
     padding: 2px 8px;
     border-radius: 4px;
@@ -119,6 +118,14 @@ body {
 #table-body {
     max-width: 1000px;
     margin: 0 auto;
+}
+
+#table-error {
+    display: none;
+    color: red;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
 }
 
 table {

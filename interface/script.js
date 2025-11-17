@@ -1,16 +1,23 @@
-
 const HOST = 'http://127.0.0.1:3000'
+
 
 function populateTable(data) {
 
-    const table = document.getElementById('table');
+    const tbody = document.getElementById('table-tbody');
     const rowsCountSpan = document.getElementById('rows-count');
+
+    const errorDiv = document.getElementById('table-error');
+    errorDiv.style.display = 'none';
+    errorDiv.textContent = '';
+    tbody.innerHTML = '';
 
     if (typeof data.rowCount !== 'number') {
         rowsCountSpan.textContent = data.rowCount;
     } else if (data.rows) {
         rowsCountSpan.textContent = data.rows.length;
     }
+
+    if (!data.rows) return;
 
     for (const row of data.rows) {
         const tr = document.createElement('tr');
@@ -39,9 +46,22 @@ function populateTable(data) {
         tr.appendChild(tdRegion);
 
 
-        table.appendChild(tr);
+        tbody.appendChild(tr);
     }
 }
+
+
+async function initTable() {
+    try {
+        const data = await (await fetch(HOST + '/towns')).json();
+        const rowCounts = await (await fetch(HOST + '/tables')).json();
+        populateTable(data);
+        addRowCounts(rowCounts);
+    } catch (err) {
+        handleError(err);
+    }
+}
+
 
 function addRowCounts(rowCounts) {
     document.getElementById('towns-count').textContent = rowCounts.towns;
@@ -51,22 +71,40 @@ function addRowCounts(rowCounts) {
 }
 
 
+function handleError(err) {
+    console.error('Error fetching data:', err);
+    const errorDiv = document.getElementById('table-error');
+    errorDiv.textContent = 'Неуспешно зареждане на данните';
+    errorDiv.style.display = 'block';
+    document.getElementById('table-tbody').innerHTML = '';
+}
+
+
 document.addEventListener('DOMContentLoaded', async () => {
+    await initTable();
+});
+
+
+document.getElementById('search-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const townInput = document.getElementById('town').value.trim();
+
+    if (!townInput) return;
 
     try {
-        const data = await (await fetch(HOST + '/towns')).json();
-        const rowCounts = await (await fetch(HOST + '/tables')).json();
-        populateTable(data);
-        addRowCounts(rowCounts);
-    } catch (err) {
-        console.error('Error fetching data:', err);
-        const tr = document.createElement('tr');
-        const td = document.createElement('td');
-        td.colSpan = 5;
-        td.textContent = 'Неуспешно зареждане на данните';
-        td.style.textAlign = 'center';
-        tr.appendChild(td);
-        table.appendChild(tr);
-    }
+        const apiUrl = new URL(HOST + '/towns');
+        apiUrl.searchParams.append('name', townInput);
 
+        const data = await (await fetch(apiUrl)).json();
+        populateTable(data);
+    } catch (err) {
+        handleError(err);
+    }
+});
+
+
+document.getElementById('search-form').addEventListener('reset', async (event) => {
+    event.preventDefault();
+    await initTable();
 });

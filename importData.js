@@ -15,8 +15,9 @@ const files = [
         await downloadFiles(files);
         await populateDB();
 
-        const end = Date.now(); 
+        const end = Date.now();
         console.log(`Finished in ${(end - start) / 1000} seconds`);
+        
     } catch (err) {
         console.error(err);
         return;
