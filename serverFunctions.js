@@ -1,21 +1,25 @@
 import * as db from './db/index.js';
 
-export const getTownsByName = async (str) => {
-    const query = `SELECT t.id, t.type,t.name_bg as town, th.name_bg as townhall, m.name_bg as municipality, r.name_bg as region
+export const getTownsByCriteria = async (params) => {
+    const query = `SELECT t.id, t.type, t.name_bg as town, th.name_bg as townhall, m.name_bg as municipality, r.name_bg as region
         FROM towns t LEFT JOIN townhalls th ON t.townhall_id = th.id
 	    JOIN municipalities m ON t.municipality_id = m.id
 	    JOIN regions r ON r.id = m.region_id
-		WHERE t.name_bg ~* $1 OR t.name_en ~* $1`;
+		WHERE ($1 = '' OR t.name_bg ~* $1 OR t.name_en ~* $1)
+            AND ($2 = '' OR th.name_bg ~* $2 OR t.name_en ~* $2)
+            AND ($3 = '' OR m.name_bg ~* $3 OR m.name_bg ~* $3)
+            AND ($4 = '' OR r.name_bg ~* $4 OR r.name_en ~* $4)`;
 
 
-    if (typeof str !== 'string') {
-        throw new Error('Not a valid function parameter!');
-    }
-
-    const param = [str];
+    const values = [
+        params.town || '',
+        params.townhall || '',
+        params.municipality || '',
+        params.region || ''
+    ];
 
     try {
-        const res = await db.query(query, param);
+        const res = await db.query(query, values);
         const formattedRes = { rowCount: res.rowCount, rows: res.rows };
         return formattedRes;
     } catch (err) {

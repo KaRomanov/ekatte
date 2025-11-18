@@ -32,7 +32,7 @@ function populateTable(data) {
 
 
         const tdTownhall = document.createElement('td');
-        tdTownhall.textContent = row.townhall || 'Не е част от кметство';
+        tdTownhall.textContent = row.townhall || '-';
         tr.appendChild(tdTownhall);
 
 
@@ -88,19 +88,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.getElementById('search-form').addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const townInput = document.getElementById('town').value.trim();
+    const params = {
+        town: document.getElementById('town').value.trim(),
+        region: document.getElementById('region').value.trim(),
+        municipality: document.getElementById('municipality').value.trim(),
+        townhall: document.getElementById('townhall').value.trim()
+    };
 
-    if (!townInput) return;
+    if (!params.town && !params.region && !params.municipality && !params.townhall) {
+        return;
+    }
 
     try {
         const apiUrl = new URL(HOST + '/towns');
-        apiUrl.searchParams.append('name', townInput);
-
+        for (const key in params) {
+            if (params[key]) {
+                apiUrl.searchParams.append(key, params[key]);
+            }
+        }
         const data = await (await fetch(apiUrl)).json();
         populateTable(data);
     } catch (err) {
         handleError(err);
     }
+
 });
 
 
