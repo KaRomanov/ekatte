@@ -4,10 +4,23 @@
   "type": "module",
   "main": "importData.js",
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "transform": {},
+    "coverageProvider": "v8",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!node_modules/**",
+      "!tests/**",
+      "!coverage/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
   },
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage"
   },
   "keywords": [],
   "author": "",

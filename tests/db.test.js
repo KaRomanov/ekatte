@@ -14,7 +14,6 @@ const { Pool } = await import('pg');
 const { query, end } = await import('../db/index.js');
 
 
-
 describe('Database tests', () => {
     let mockPool;
 

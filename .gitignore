@@ -1,5 +1,6 @@
 
 /node_modules/
+/coverage/
 
 /src/*
 !src/ekatte.png
