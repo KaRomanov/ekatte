@@ -32,7 +32,7 @@ function populateTable(data) {
 
 
         const tdTownhall = document.createElement('td');
-        tdTownhall.textContent = row.townhall || '-';
+        tdTownhall.textContent = row.townhall || row.municipality_id + '-00';
         tr.appendChild(tdTownhall);
 
 
@@ -40,6 +40,9 @@ function populateTable(data) {
         tdMunicipality.textContent = row.municipality || '';
         tr.appendChild(tdMunicipality);
 
+        const tdMunicipalityId = document.createElement('td');
+        tdMunicipalityId.textContent = row.municipality_id || '';
+        tr.appendChild(tdMunicipalityId);
 
         const tdRegion = document.createElement('td');
         tdRegion.textContent = row.region || '';
