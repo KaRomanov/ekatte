@@ -28,6 +28,7 @@
   "description": "",
   "dependencies": {
     "dotenv": "^17.2.3",
+    "jest-environment-jsdom": "^30.2.0",
     "pg": "^8.16.3"
   },
   "devDependencies": {

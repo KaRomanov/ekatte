@@ -122,3 +122,10 @@ document.getElementById('search-form').addEventListener('reset', async (event) =
     event.preventDefault();
     await initTable();
 });
+
+export {
+    populateTable,
+    addRowCounts,
+    handleError,
+    initTable
+  };
