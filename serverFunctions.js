@@ -29,7 +29,7 @@ export const getTownsByCriteria = async (params) => {
 }
 
 
-const getRowCount = async (table) => {
+export const getRowCount = async (table) => {
     try {
         const res = await db.query(`SELECT COUNT(*) FROM ${table}`);
         return res.rows[0].count;

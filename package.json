@@ -4,8 +4,9 @@
   "type": "module",
   "main": "importData.js",
   "jest": {
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
     "transform": {},
+    "setupFiles": ["<rootDir>/tests/jest.setup.js"],
     "coverageProvider": "v8",
     "collectCoverage": true,
     "collectCoverageFrom": [
