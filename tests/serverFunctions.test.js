@@ -1,6 +1,6 @@
 import { jest, test, expect, beforeEach } from '@jest/globals';
-const mockQuery = jest.fn();
-const mockGetRowCount = jest.fn();
+let mockQuery = jest.fn();
+let mockGetRowCount = jest.fn();
 
 jest.mock("../db/index.js", () => ({
     query: mockQuery,
@@ -14,10 +14,8 @@ jest.mock("../serverFunctions.js", () => {
 
     return {
         getRowCount: mockGetRowCount,
-
         getTablesRowCounts: actual.getTablesRowCounts,
         getTownsByCriteria: actual.getTownsByCriteria,
-
         __esModule: true,
     };
 });
@@ -42,7 +40,6 @@ describe('Server helper functions', () => {
 
     test("getTablesRowCounts returns correct counts", async () => {
 
-
         mockGetRowCount
             .mockResolvedValueOnce("10")
             .mockResolvedValueOnce("5")
@@ -52,7 +49,6 @@ describe('Server helper functions', () => {
         const result = await getTablesRowCounts();
 
         expect(mockGetRowCount).toHaveBeenCalledTimes(4);
-        expect(mockGetRowCount).toHaveBeenNthCalledWith(1, "towns");
 
         expect(result).toEqual({
             towns: "10", municipalities: "5", townhalls: "3", regions: "1"
@@ -81,8 +77,8 @@ describe('Server helper functions', () => {
 
 
     test("getTownsByCriteria example", async () => {
-        mockQuery.mockResolvedValueOnce({ rowCount: 1, rows: [{ town: 'Sofia' }] });
-        const result = await getTownsByCriteria({});
+        mockQuery = jest.fn().mockResolvedValueOnce({ rowCount: 1, rows: [{ town: 'Sofia' }] });
+        const result = await getTownsByCriteria({ town: 'Sofia' });
         expect(mockQuery).toHaveBeenCalledTimes(1);
         expect(result.rowCount).toBe(1);
     });

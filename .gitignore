@@ -1,7 +1,7 @@
 
 /node_modules/
 /coverage/
-
+/books/
 /src/*
 !src/ekatte.png
 !src/interface.png

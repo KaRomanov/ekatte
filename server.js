@@ -30,17 +30,14 @@ server.on('request', async (req, res) => {
         try {
             const data = await getTownsByCriteria(params);
             res.setHeader('Content-Type', 'application/json');
-            console.log('API return: ',parsedURL.path);
+            console.log('API return: ', parsedURL.path);
             return res.end(JSON.stringify(data));
         } catch (err) {
             console.error(err);
             return res.statusCode = 500, res.end();
         }
 
-    }
-
-
-    if (pathName === '/tables') {
+    } else if (pathName === '/tables') {
         try {
             const data = await getTablesRowCounts();
             res.setHeader('Content-Type', 'application/json');
@@ -49,10 +46,16 @@ server.on('request', async (req, res) => {
             console.error(err);
             return res.statusCode = 500, res.end();
         }
+    } else {
+        return res.statusCode = 404, res.end();
     }
 
 });
 
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+    server.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+export default server;

@@ -17,7 +17,7 @@ describe('getFile', () => {
     });
 
 
-    it('writes fetched content to a file', async () => {
+    test('writes fetched content to a file', async () => {
         fetch.mockResponseOnce('{"name":"test"}');
 
         const writeFileSpy = jest.spyOn(fs, 'writeFile').mockResolvedValue();
@@ -31,7 +31,7 @@ describe('getFile', () => {
     });
 
 
-    it('throws on HTTP error', async () => {
+    test('throws on HTTP error', async () => {
         fetch.mockResponseOnce('', { status: 404 });
 
         await expect(
@@ -40,7 +40,7 @@ describe('getFile', () => {
     });
 
 
-    it('throws if writing to disk fails', async () => {
+    test('throws if writing to disk fails', async () => {
         fetch.mockResponseOnce('{"name":"test"}');
         const writeFileSpy = jest.spyOn(fs, 'writeFile').mockRejectedValue(new Error('Disk full'));
 
@@ -52,29 +52,29 @@ describe('getFile', () => {
     });
 
 
-    it('throws if URL is null', async () => {
+    test('throws if URL is null', async () => {
         await expect(getFile(null, 'dest.json')).rejects.toThrow();
     });
 
 
-    it('throws if URL is empty string', async () => {
+    test('throws if URL is empty string', async () => {
         await expect(getFile('', 'dest.json')).rejects.toThrow();
     });
 
 
-    it('throws if dest is null', async () => {
+    test('throws if dest is null', async () => {
         fetch.mockResponseOnce('{"data":"test"}');
         await expect(getFile('https://example.com/file.json', null)).rejects.toThrow();
     });
 
 
-    it('throws if dest is empty string', async () => {
+    test('throws if dest is empty string', async () => {
         fetch.mockResponseOnce('{"data":"test"}');
         await expect(getFile('https://example.com/file.json', '')).rejects.toThrow();
     });
 
 
-    it('throws if fetch itself rejects (network error)', async () => {
+    test('throws if fetch itself rejects (network error)', async () => {
         fetch.mockRejectOnce(new Error('Network error'));
 
         await expect(
@@ -96,7 +96,7 @@ describe('downloadFiles', () => {
     ];
 
 
-    it('downloads multiple files', async () => {
+    test('downloads multiple files', async () => {
         fetch
             .mockResponseOnce('{"file":1}')
             .mockResponseOnce('{"file":2}');
@@ -116,7 +116,7 @@ describe('downloadFiles', () => {
     });
 
 
-    it('handles failed downloads', async () => {
+    test('handles failed downloads', async () => {
         fetch
             .mockResponseOnce('{"file":1}')
             .mockRejectOnce(new Error('Network error'));

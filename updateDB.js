@@ -1,7 +1,7 @@
 import * as db from './db/index.js';
 import fs from 'fs/promises';
 
-async function loadJsonFile(filePath) {
+export async function loadJsonFile(filePath) {
     try {
         const data = await fs.readFile(filePath);
         return JSON.parse(data);
