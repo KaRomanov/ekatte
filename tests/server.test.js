@@ -1,73 +1,88 @@
-import { jest, test, expect, beforeEach } from '@jest/globals';
+import { describe, jest } from '@jest/globals';
 import request from 'supertest';
+import http from 'http';
 
-jest.mock('../serverFunctions.js');
+const mockGetTownsByCriteria = jest.fn();
+const mockGetTablesRowCounts = jest.fn();
 
-import server from '../server.js';
+jest.unstable_mockModule('../serverFunctions.js', () => ({
+    getTownsByCriteria: mockGetTownsByCriteria,
+    getTablesRowCounts: mockGetTablesRowCounts
+}));
 
-import { getTownsByCriteria, getTablesRowCounts } from '../__mocks__/serverFunctions.js';
+const { default: server } = await import('../server.js');
 
-const expectedMockTownsData = [{ id: 101, name: 'Testville', region: 'R1' }];
-const expectedMockTablesData = { towns: 99, regions: 12 };
+afterEach(() => {
+    jest.clearAllMocks();
+});
 
+describe('API tests', () => {
+    test('GET /towns returns towns data', async () => {
+        mockGetTownsByCriteria.mockResolvedValueOnce({
+            rowCount: 1,
+            rows: [{ id: 1, town: 'Sofia' }]
+        });
 
-describe('HTTP Server Endpoints', () => {
+        const res = await request(server)
+            .get('/towns')
+            .query({ town: 'Sofia' })
+            .expect(200)
+            .expect('Content-Type', /json/);
 
-    afterAll((done) => {
-        server.close(done);
-    });
+        expect(res.body).toEqual({
+            rowCount: 1,
+            rows: [{ id: 1, town: 'Sofia' }]
+        });
 
-    afterEach(() => {
-        getTownsByCriteria.mockClear();
-        getTablesRowCounts.mockClear();
-    });
-
-    test('should return 200 and town data with default (empty) parameters', async () => {
-        const response = await request(server).get('/towns');
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual(expectedMockTownsData);
-
-        expect(getTownsByCriteria).toHaveBeenCalledWith({
-            town: '',
+        expect(mockGetTownsByCriteria).toHaveBeenCalledWith({
+            town: 'Sofia',
             townhall: '',
             municipality: '',
             region: ''
         });
     });
 
-    test('should correctly parse and pass query parameters', async () => {
-        const query = '?town=CityName&region=Area&townhall=Y';
+    test('GET /towns returns 500 on error', async () => {
+        mockGetTownsByCriteria.mockRejectedValueOnce(new Error('DB failure'));
 
-        const response = await request(server).get(`/towns${query}`);
+        await request(server)
+            .get('/towns')
+            .expect(500);
+    });
 
-        expect(response.statusCode).toBe(200);
-        expect(getTownsByCriteria).toHaveBeenCalledWith({
-            town: 'CityName',
-            townhall: 'Y',
-            municipality: '',
-            region: 'Area'
+    test('GET /tables returns table row counts', async () => {
+        mockGetTablesRowCounts.mockResolvedValueOnce({
+            towns: '10',
+            municipalities: '5',
+            townhalls: '3',
+            regions: '2'
         });
+
+        const res = await request(server)
+            .get('/tables')
+            .expect(200)
+            .expect('Content-Type', /json/);
+
+        expect(res.body).toEqual({
+            towns: '10',
+            municipalities: '5',
+            townhalls: '3',
+            regions: '2'
+        });
+
+        expect(mockGetTablesRowCounts).toHaveBeenCalledTimes(1);
     });
 
-    test('should return 500 if the underlying function throws a database error', async () => {
-        const response = await request(server).get('/towns?town=ErrorTown');
-
-        expect(response.statusCode).toBe(500);
-        expect(response.text).toBe('');
-        expect(getTownsByCriteria).toHaveBeenCalledTimes(1);
+    test('POST request returns 405', async () => {
+        await request(server)
+            .post('/towns')
+            .expect(405);
     });
 
-    test('should return 405 for a path does not exist', async () => {
-        const response = await request(server).get('/no/such/path');
-
-        expect(response.statusCode).toBe(404);
-        expect(response.text).toBe('');
+    test('GET unknown route returns 404', async () => {
+        await request(server)
+            .get('/does-not-exist')
+            .expect(404);
     });
+})
 
-    test('should return 404 for DELETE on an unknown endpoint', async () => {
-        const response = await request(server).delete('/nowhere');
-
-        expect(response.statusCode).toBe(405);
-    });
-});

@@ -39,3 +39,9 @@ describe('loadJsonFile', () => {
         expect(fs.readFile).toHaveBeenCalledWith('missing.json');
     });
 });
+
+describe('Insert functions', () => {
+
+
+    
+})

@@ -1,7 +1,7 @@
-import * as db from './db/index.js';
+import { query } from './db/index.js';
 
 export const getTownsByCriteria = async (params) => {
-    const query = `SELECT t.id, t.type, t.name_bg as town, th.id as townhall, m.name_bg as municipality,m.id as municipality_id, r.name_bg as region
+    const sql = `SELECT t.id, t.type, t.name_bg as town, th.id as townhall, m.name_bg as municipality,m.id as municipality_id, r.name_bg as region
         FROM towns t LEFT JOIN townhalls th ON t.townhall_id = th.id
 	    JOIN municipalities m ON t.municipality_id = m.id
 	    JOIN regions r ON r.id = m.region_id
@@ -19,7 +19,7 @@ export const getTownsByCriteria = async (params) => {
     ];
 
     try {
-        const res = await db.query(query, values);
+        const res = await query(sql, values);
         const formattedRes = { rowCount: res.rowCount, rows: res.rows };
         return formattedRes;
     } catch (err) {
@@ -31,7 +31,7 @@ export const getTownsByCriteria = async (params) => {
 
 export const getRowCount = async (table) => {
     try {
-        const res = await db.query(`SELECT COUNT(*) FROM ${table}`);
+        const res = await query(`SELECT COUNT(*) FROM ${table}`);
         return res.rows[0].count;
     } catch (err) {
         console.error(err);

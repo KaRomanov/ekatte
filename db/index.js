@@ -4,6 +4,13 @@ dotenv.config();
 
 const pool = new Pool();
 
+pool.on('error', (err) => {
+    console.error('PostgreSQL pool error', err);
+    process.exit(1);
+});
+
+export const getClient = () => pool.connect();
+
 export const query = async (text, params) => {
     try {
         //const start = Date.now();
@@ -13,6 +20,7 @@ export const query = async (text, params) => {
         return res;
     } catch (err) {
         console.error('Query failed:', err);
+        throw err;
     }
 }
 

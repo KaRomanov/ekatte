@@ -1,58 +1,66 @@
 import { jest } from '@jest/globals';
 
-const mockPoolInstance = {
-    query: jest.fn(),
-    end: jest.fn(),
-};
+jest.unstable_mockModule('pg', async () => {
+    const myPool = {
+        query: jest.fn(),
+        connect: jest.fn(),
+        end: jest.fn(),
+        on: jest.fn(),
+    };
 
-jest.unstable_mockModule('pg', () => ({
-    Pool: jest.fn(() => mockPoolInstance),
-}));
+    return {
+        Pool: jest.fn(() => myPool),
+        __pool: myPool,
+    };
+});
 
+const { query, getClient, end } = await import('../db/index.js');
+const pg = await import('pg');
+const myPool = pg.__pool;
 
-const { Pool } = await import('pg');
-const { query, end } = await import('../db/index.js');
-
-
-describe('Database tests', () => {
-    let mockPool;
-
+describe('db module', () => {
     beforeEach(() => {
-        mockPool = new Pool();
         jest.clearAllMocks();
     });
 
 
-    test('query() should call pool.query with correct args and return result', async () => {
-        const mockResult = { rows: [{ id: 1 }], rowCount: 1 };
-        mockPool.query.mockResolvedValue(mockResult);
+    test('query executes successfully', async () => {
+        const fakeResult = { rows: [{ id: 1 }] };
+        myPool.query.mockResolvedValue(fakeResult);
 
-        const result = await query('SELECT * FROM users WHERE id = $1', [1]);
+        const res = await query('SELECT 1');
 
-        expect(mockPool.query).toHaveBeenCalledWith(
-            'SELECT * FROM users WHERE id = $1',
-            [1]
-        );
-        expect(result).toBe(mockResult);
+        expect(myPool.query).toHaveBeenCalledWith('SELECT 1', undefined);
+        expect(res).toBe(fakeResult);
+    });
+
+    test('query throws on failure', async () => {
+        const error = new Error('DB error');
+        myPool.query.mockRejectedValue(error);
+
+        await expect(query('SELECT 1')).rejects.toThrow('DB error');
     });
 
 
-    test('query() should catch errors and log them', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-        const error = new Error('Database error');
+    test('getClient returns a client', async () => {
+        const fakeClient = {
+            query: jest.fn(),
+            release: jest.fn(),
+        };
 
-        mockPool.query.mockRejectedValue(error);
+        myPool.connect.mockResolvedValue(fakeClient);
 
-        const result = await query('BAD QUERY');
+        const client = await getClient();
 
-        expect(consoleSpy).toHaveBeenCalledWith('Query failed:', error);
-        expect(result).toBeUndefined();
+        expect(myPool.connect).toHaveBeenCalled();
+        expect(client).toBe(fakeClient);
     });
 
 
-    test('end() should call pool.end()', async () => {
+    test('end closes the pool', async () => {
         await end();
-        expect(mockPool.end).toHaveBeenCalled();
+
+        expect(myPool.end).toHaveBeenCalled();
     });
 
 });
