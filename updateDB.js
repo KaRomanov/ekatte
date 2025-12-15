@@ -1,17 +1,7 @@
-import {getClient} from './db/index.js';
-import fs from 'fs/promises';
+import { getClient } from './db/index.js';
+import { loadJsonFile } from './helper.js';
 
-export async function loadJsonFile(filePath) {
-    try {
-        const data = await fs.readFile(filePath);
-        return JSON.parse(data);
-    } catch (err) {
-        console.error(err);
-        throw new Error(`Not a valid json file: ${filePath} - ${err.message}`);
-    }
-}
-
-async function insertRegions(dbClient) {
+export async function insertRegions(dbClient) {
 
     const regions = await loadJsonFile('./src/regions.json');
 
@@ -37,7 +27,7 @@ async function insertRegions(dbClient) {
     }
 }
 
-async function insertMunicipalities(dbClient) {
+export async function insertMunicipalities(dbClient) {
 
     const municipalities = await loadJsonFile('./src/municipalities.json');
 
@@ -63,7 +53,7 @@ async function insertMunicipalities(dbClient) {
     }
 }
 
-async function insertTownhalls(dbClient) {
+export async function insertTownhalls(dbClient) {
 
     const townhalls = await loadJsonFile('./src/townhalls.json');
 
@@ -90,7 +80,7 @@ async function insertTownhalls(dbClient) {
 }
 
 
-async function insertTowns(dbClient) {
+export async function insertTowns(dbClient) {
     const towns = await loadJsonFile('./src/towns.json');
 
     const validData = towns.filter(t => t.ekatte && t.t_v_m && t.name && t.name_en && t.kmetstvo && t.obshtina)
