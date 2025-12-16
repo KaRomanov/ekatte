@@ -1,25 +1,19 @@
 const HOST = 'http://127.0.0.1:3000'
 
+let allRows = [];
+let currentPage = 1;
+const rowsPerPage = 20;
+const buttonsNum = 3;
 
-function populateTable(data) {
-
+function renderPage() {
     const tbody = document.getElementById('table-tbody');
-    const rowsCountSpan = document.getElementById('rows-count');
-
-    const errorDiv = document.getElementById('table-error');
-    errorDiv.style.display = 'none';
-    errorDiv.textContent = '';
     tbody.innerHTML = '';
 
-    if (typeof data.rowCount !== 'number') {
-        rowsCountSpan.textContent = data.rowCount;
-    } else if (data.rows) {
-        rowsCountSpan.textContent = data.rows.length;
-    }
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const pageRows = allRows.slice(start, end);
 
-    if (!data.rows) return;
-
-    for (const row of data.rows) {
+    for (const row of pageRows) {
         const tr = document.createElement('tr');
 
         const tdId = document.createElement('td');
@@ -52,6 +46,99 @@ function populateTable(data) {
         tbody.appendChild(tr);
     }
 }
+
+function createPageButton(page) {
+    const btn = document.createElement('button');
+    btn.textContent = page;
+
+    if (page === currentPage) {
+        btn.className = 'active';
+        btn.disabled = true;
+    }
+
+    btn.addEventListener('click', () => {
+        currentPage = page;
+        renderPage();
+        setupPagination();
+    });
+
+    return btn;
+}
+
+function createDots() {
+    const span = document.createElement('span');
+    span.textContent = '…';
+    span.className = 'dots';
+    return span;
+}
+
+function setupPagination() {
+    const pageNumbers = document.getElementById('pageNumbers');
+    pageNumbers.innerHTML = '';
+
+    const totalPages = getPagesNum();
+    if (totalPages <= 1) return;
+
+    const start = Math.max(1, currentPage - buttonsNum);
+    const end = Math.min(totalPages, currentPage + buttonsNum);
+
+    if (start > 1) {
+        pageNumbers.appendChild(createDots());
+    }
+
+    // Page buttons
+    for (let i = start; i <= end; i++) {
+        pageNumbers.appendChild(createPageButton(i));
+    }
+
+    // Right dots
+    if (end < totalPages) {
+        pageNumbers.appendChild(createDots());
+    }
+}
+
+
+function getPagesNum() {
+    return Math.ceil(allRows.length / rowsPerPage);
+}
+
+function populateTable(data) {
+
+    const tbody = document.getElementById('table-tbody');
+    const rowsCountSpan = document.getElementById('rows-count');
+    const errorDiv = document.getElementById('table-error');
+
+    errorDiv.style.display = 'none';
+    errorDiv.textContent = '';
+    tbody.innerHTML = '';
+
+    if (typeof data.rowCount !== 'number') {
+        rowsCountSpan.textContent = data.rowCount;
+    } else if (data.rows) {
+        rowsCountSpan.textContent = data.rows.length;
+    }
+
+    if (!data.rows) return;
+
+    allRows = data.rows;
+    currentPage = 1;
+
+    renderPage();
+    setupPagination();
+
+}
+
+document.getElementById('first').addEventListener('click', () => {
+    currentPage = 1;
+    renderPage();
+    setupPagination();
+});
+
+document.getElementById('last').addEventListener('click', () => {
+    currentPage = getPagesNum();
+    renderPage();
+    setupPagination();
+});
 
 
 async function initTable() {
@@ -128,4 +215,4 @@ export {
     addRowCounts,
     handleError,
     initTable
-  };
+};

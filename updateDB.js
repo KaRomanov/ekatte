@@ -114,9 +114,10 @@ export async function insertTowns(dbClient) {
 }
 
 export const populateDB = async () => {
+    let client = null;
     try {
 
-        const client = await getClient();
+        client = await getClient();
 
         await client.query('BEGIN');
         await client.query('SET CONSTRAINTS ALL DEFERRED');

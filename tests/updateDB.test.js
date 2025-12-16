@@ -6,7 +6,6 @@ jest.unstable_mockModule('../helper.js', () => ({
 }));
 
 let dbClient;
-let consoleErrorSpy;
 
 beforeAll(() => {
     dbClient = { query: jest.fn(), release: jest.fn() };
@@ -14,11 +13,6 @@ beforeAll(() => {
 
 beforeEach(() => {
     jest.clearAllMocks();
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-});
-
-afterEach(() => {
-    consoleErrorSpy.mockRestore();
 });
 
 const { insertRegions, insertMunicipalities, insertTownhalls, insertTowns } = await import('../updateDB.js');
