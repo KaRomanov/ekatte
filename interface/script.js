@@ -4,6 +4,7 @@ let allRows = [];
 let currentPage = 1;
 const rowsPerPage = 20;
 const buttonsNum = 3;
+let sortState = [];
 
 function renderPage() {
     const tbody = document.getElementById('table-tbody');
@@ -86,12 +87,10 @@ function setupPagination() {
         pageNumbers.appendChild(createDots());
     }
 
-    // Page buttons
     for (let i = start; i <= end; i++) {
         pageNumbers.appendChild(createPageButton(i));
     }
 
-    // Right dots
     if (end < totalPages) {
         pageNumbers.appendChild(createDots());
     }
@@ -125,7 +124,8 @@ function populateTable(data) {
 
     renderPage();
     setupPagination();
-
+    sortState = [];
+    updateSortIndicators();
 }
 
 document.getElementById('first').addEventListener('click', () => {
@@ -169,9 +169,94 @@ function handleError(err) {
     document.getElementById('table-tbody').innerHTML = '';
 }
 
+function getCorrectSortValue(row, key) {
+    let value;
+
+    if (key === 'townhall') {
+        value = row.townhall ?? `${row.municipality_id}-00`;
+    } else {
+        value = row[key] ?? '';
+    }
+
+    if (typeof value === 'string') {
+        value = value.toLowerCase();
+    }
+
+    return value;
+}
+
+function applySort() {
+
+    allRows.sort((a, b) => {
+        for (const { key, dir } of sortState) {
+
+            let valA = getCorrectSortValue(a, key);
+            let valB = getCorrectSortValue(b, key);
+
+            if (valA < valB) {
+                if (dir === 'asc') {
+                    return -1;
+                }
+                return 1;
+            }
+
+            if (valB < valA) {
+                if (dir === 'asc') {
+                    return 1;
+                }
+                return -1;
+            }
+            return 0;
+        }
+    });
+
+    currentPage = 1;
+    renderPage();
+    setupPagination();
+    updateSortIndicators();
+
+}
+
+function updateSortIndicators() {
+    document.querySelectorAll('th[data-key]').forEach(th => {
+        th.classList.remove('sorted-asc', 'sorted-desc');
+    });
+
+    sortState.forEach(({ key, dir }) => {
+        const th = document.querySelector(`th[data-key="${key}"]`);
+        if (th) th.classList.add(`sorted-${dir}`);
+    });
+}
+
+function handleSortClick(key, isShift) {
+    const exist = sortState.find(s => s.key === key);
+
+    if (!isShift && !exist) {
+        sortState = [];
+    }
+
+    if (!exist) {
+        sortState.push({ key, dir: 'asc' });
+    } else if (exist.dir === 'asc') {
+        exist.dir = 'desc';
+    } else {
+        sortState = sortState.filter(s => s.key !== key);
+    }
+
+    applySort();
+}
+
+function initSorting() {
+    document.querySelectorAll('th[data-key]').forEach(th => {
+        th.addEventListener('click', (e) => {
+            handleSortClick(th.dataset.key, e.shiftKey);
+        });
+    });
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
     await initTable();
+    initSorting();
 });
 
 
