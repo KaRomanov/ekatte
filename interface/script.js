@@ -1,22 +1,17 @@
 import { fetchTowns, fetchStats } from "./api.js";
 import {
-    populateTable, renderPage,
+    populateTable, renderPage, getRowsState,
     setupPagination, initSorting
 } from "./table.js";
+import { exportCSV, exportExcel } from './export.js';
 
 
-document.getElementById('first').addEventListener('click', () => {
-    currentPage = 1;
-    renderPage();
-    setupPagination();
-});
+document.getElementById('export-csv')
+    .addEventListener('click', () => exportCSV(getRowsState()));
 
 
-document.getElementById('last').addEventListener('click', () => {
-    currentPage = getPagesNum();
-    renderPage();
-    setupPagination();
-});
+document.getElementById('export-excel')
+    .addEventListener('click', () => exportExcel(getRowsState()));
 
 
 async function initTable() {

@@ -1,9 +1,10 @@
 const HOST = 'http://127.0.0.1:3000'
 
+
 function fixData(rows) {
     for (const row of rows) {
         if (row.townhall == null) {
-            row.townhall = row.municipality_id + '00';
+            row.townhall = row.municipality_id + '-00';
         }
     }
 }

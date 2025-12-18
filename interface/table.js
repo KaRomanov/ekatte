@@ -4,6 +4,9 @@ const rowsPerPage = 20;
 const buttonsNum = 3;
 let sortState = [];
 
+export function getRowsState() {
+    return allRows;
+}
 
 function getPagesNum() {
     return Math.ceil(allRows.length / rowsPerPage);
@@ -163,3 +166,17 @@ export function initSorting() {
         });
     });
 }
+
+
+document.getElementById('first').addEventListener('click', () => {
+    currentPage = 1;
+    renderPage();
+    setupPagination();
+});
+
+
+document.getElementById('last').addEventListener('click', () => {
+    currentPage = getPagesNum();
+    renderPage();
+    setupPagination();
+});

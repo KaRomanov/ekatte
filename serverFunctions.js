@@ -7,7 +7,7 @@ export const getTownsByCriteria = async (params) => {
 	    JOIN regions r ON r.id = m.region_id
 		WHERE ($1 = '' OR t.name_bg ~* $1 OR t.name_en ~* $1)
             AND ($2 = '' OR th.name_bg ~* $2 OR th.name_en ~* $2)
-            AND ($3 = '' OR m.name_bg ~* $3 OR m.name_bg ~* $3)
+            AND ($3 = '' OR m.name_bg ~* $3 OR m.name_en ~* $3)
             AND ($4 = '' OR r.name_bg ~* $4 OR r.name_en ~* $4)`;
 
 

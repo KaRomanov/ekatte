@@ -110,6 +110,28 @@ body {
     font-size: 12px;
 }
 
+.stat-reports {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.stat-reports button {
+    padding: 6px 12px;
+    font-size: 13px;
+    background: #8ea6b1;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.stat-reports button:hover {
+    background: #7d96a1;
+}
+
 
 #table-body {
     max-width: 1000px;
