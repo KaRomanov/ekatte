@@ -1,138 +1,16 @@
-const HOST = 'http://127.0.0.1:3000'
+import { fetchTowns, fetchStats } from "./api.js";
+import {
+    populateTable, renderPage,
+    setupPagination, initSorting
+} from "./table.js";
 
-let allRows = [];
-let currentPage = 1;
-const rowsPerPage = 20;
-const buttonsNum = 3;
-let sortState = [];
-
-function renderPage() {
-    const tbody = document.getElementById('table-tbody');
-    tbody.innerHTML = '';
-
-    const start = (currentPage - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
-    const pageRows = allRows.slice(start, end);
-
-    for (const row of pageRows) {
-        const tr = document.createElement('tr');
-
-        const tdId = document.createElement('td');
-        tdId.textContent = row.id || '';
-        tr.appendChild(tdId);
-
-        const tdTown = document.createElement('td');
-        tdTown.textContent = (row.type + ' ' + row.town) || '';
-        tr.appendChild(tdTown);
-
-
-        const tdTownhall = document.createElement('td');
-        tdTownhall.textContent = row.townhall || row.municipality_id + '-00';
-        tr.appendChild(tdTownhall);
-
-
-        const tdMunicipality = document.createElement('td');
-        tdMunicipality.textContent = row.municipality || '';
-        tr.appendChild(tdMunicipality);
-
-        const tdMunicipalityId = document.createElement('td');
-        tdMunicipalityId.textContent = row.municipality_id || '';
-        tr.appendChild(tdMunicipalityId);
-
-        const tdRegion = document.createElement('td');
-        tdRegion.textContent = row.region || '';
-        tr.appendChild(tdRegion);
-
-
-        tbody.appendChild(tr);
-    }
-}
-
-function createPageButton(page) {
-    const btn = document.createElement('button');
-    btn.textContent = page;
-
-    if (page === currentPage) {
-        btn.className = 'active';
-        btn.disabled = true;
-    }
-
-    btn.addEventListener('click', () => {
-        currentPage = page;
-        renderPage();
-        setupPagination();
-    });
-
-    return btn;
-}
-
-function createDots() {
-    const span = document.createElement('span');
-    span.textContent = '…';
-    span.className = 'dots';
-    return span;
-}
-
-function setupPagination() {
-    const pageNumbers = document.getElementById('pageNumbers');
-    pageNumbers.innerHTML = '';
-
-    const totalPages = getPagesNum();
-    if (totalPages <= 1) return;
-
-    const start = Math.max(1, currentPage - buttonsNum);
-    const end = Math.min(totalPages, currentPage + buttonsNum);
-
-    if (start > 1) {
-        pageNumbers.appendChild(createDots());
-    }
-
-    for (let i = start; i <= end; i++) {
-        pageNumbers.appendChild(createPageButton(i));
-    }
-
-    if (end < totalPages) {
-        pageNumbers.appendChild(createDots());
-    }
-}
-
-
-function getPagesNum() {
-    return Math.ceil(allRows.length / rowsPerPage);
-}
-
-function populateTable(data) {
-
-    const tbody = document.getElementById('table-tbody');
-    const rowsCountSpan = document.getElementById('rows-count');
-    const errorDiv = document.getElementById('table-error');
-
-    errorDiv.style.display = 'none';
-    errorDiv.textContent = '';
-    tbody.innerHTML = '';
-
-    if (typeof data.rowCount !== 'number') {
-        rowsCountSpan.textContent = data.rowCount;
-    } else if (data.rows) {
-        rowsCountSpan.textContent = data.rows.length;
-    }
-
-    if (!data.rows) return;
-
-    allRows = data.rows;
-    currentPage = 1;
-
-    renderPage();
-    setupPagination();
-    sortState = [];
-    updateSortIndicators();
-}
 
 document.getElementById('first').addEventListener('click', () => {
     currentPage = 1;
     renderPage();
     setupPagination();
 });
+
 
 document.getElementById('last').addEventListener('click', () => {
     currentPage = getPagesNum();
@@ -143,9 +21,13 @@ document.getElementById('last').addEventListener('click', () => {
 
 async function initTable() {
     try {
-        const data = await (await fetch(HOST + '/towns')).json();
-        const rowCounts = await (await fetch(HOST + '/tables')).json();
+        clearError();
+        const data = await fetchTowns();
+        const rowCounts = await fetchStats();
+
         populateTable(data);
+        updateRowCount(data.rowCount);
+
         addRowCounts(rowCounts);
     } catch (err) {
         handleError(err);
@@ -160,6 +42,10 @@ function addRowCounts(rowCounts) {
     document.getElementById('regions-count').textContent = rowCounts.regions;
 }
 
+function updateRowCount(num) {
+    const el = document.getElementById('rows-count');
+    if (el) el.textContent = num;
+}
 
 function handleError(err) {
     console.error('Error fetching data:', err);
@@ -169,90 +55,13 @@ function handleError(err) {
     document.getElementById('table-tbody').innerHTML = '';
 }
 
-function getCorrectSortValue(row, key) {
-    let value;
 
-    if (key === 'townhall') {
-        value = row.townhall ?? `${row.municipality_id}-00`;
-    } else {
-        value = row[key] ?? '';
-    }
-
-    if (typeof value === 'string') {
-        value = value.toLowerCase();
-    }
-
-    return value;
+function clearError() {
+    const errorDiv = document.getElementById('table-error');
+    errorDiv.textContent = '';
+    errorDiv.style.display = 'none';
 }
 
-function applySort() {
-
-    allRows.sort((a, b) => {
-        for (const { key, dir } of sortState) {
-
-            let valA = getCorrectSortValue(a, key);
-            let valB = getCorrectSortValue(b, key);
-
-            if (valA < valB) {
-                if (dir === 'asc') {
-                    return -1;
-                }
-                return 1;
-            }
-
-            if (valB < valA) {
-                if (dir === 'asc') {
-                    return 1;
-                }
-                return -1;
-            }
-            return 0;
-        }
-    });
-
-    currentPage = 1;
-    renderPage();
-    setupPagination();
-    updateSortIndicators();
-
-}
-
-function updateSortIndicators() {
-    document.querySelectorAll('th[data-key]').forEach(th => {
-        th.classList.remove('sorted-asc', 'sorted-desc');
-    });
-
-    sortState.forEach(({ key, dir }) => {
-        const th = document.querySelector(`th[data-key="${key}"]`);
-        if (th) th.classList.add(`sorted-${dir}`);
-    });
-}
-
-function handleSortClick(key, isShift) {
-    const exist = sortState.find(s => s.key === key);
-
-    if (!isShift && !exist) {
-        sortState = [];
-    }
-
-    if (!exist) {
-        sortState.push({ key, dir: 'asc' });
-    } else if (exist.dir === 'asc') {
-        exist.dir = 'desc';
-    } else {
-        sortState = sortState.filter(s => s.key !== key);
-    }
-
-    applySort();
-}
-
-function initSorting() {
-    document.querySelectorAll('th[data-key]').forEach(th => {
-        th.addEventListener('click', (e) => {
-            handleSortClick(th.dataset.key, e.shiftKey);
-        });
-    });
-}
 
 document.addEventListener('DOMContentLoaded', async () => {
     await initTable();
@@ -274,19 +83,9 @@ document.getElementById('search-form').addEventListener('submit', async (event) 
         return;
     }
 
-    try {
-        const apiUrl = new URL(HOST + '/towns');
-        for (const key in params) {
-            if (params[key]) {
-                apiUrl.searchParams.append(key, params[key]);
-            }
-        }
-        const data = await (await fetch(apiUrl)).json();
-        populateTable(data);
-    } catch (err) {
-        handleError(err);
-    }
-
+    const data = await fetchTowns(params);
+    populateTable(data);
+    updateRowCount(data.rowCount);
 });
 
 
@@ -294,10 +93,3 @@ document.getElementById('search-form').addEventListener('reset', async (event) =
     event.preventDefault();
     await initTable();
 });
-
-export {
-    populateTable,
-    addRowCounts,
-    handleError,
-    initTable
-};
