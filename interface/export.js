@@ -34,44 +34,21 @@ export function exportCSV(rows) {
 export function exportExcel(rows) {
     const t0 = performance.now();
 
-    let table = `
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Town</th>
-                <th>Townhall</th>
-                <th>Municipality</th>
-                <th>Municipality ID</th>
-                <th>Region</th>
-            </tr>
-    `;
+    const table = rows.map(r => ({
+        ID: r.id,
+        Type: r.type,
+        Town: r.town,
+        Townhall: r.townhall,
+        Municipality: r.municipality,
+        Municipality_ID: r.municipality_id,
+        Region: r.region
+    }));
 
-    for (const row of rows) {
-        table += `
-            <tr>
-                <td>${row.id}</td>
-                <td>${row.type}</td>
-                <td>${row.town}</td>
-                <td>${row.townhall}</td>
-                <td>${row.municipality}</td>
-                <td>${row.municipality_id}</td>
-                <td>${row.region}</td>
-            </tr>
-        `;
-    }
+    const wSheet = XLSX.utils.json_to_sheet(table);
+    const wBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wBook, wSheet, 'Towns');
 
-    table += '</table>';
-
-    const blob = new Blob([`\ufeff${table}`], { type: 'application/vnd.ms-excel' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'towns.xls';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    XLSX.writeFile(wBook, 'towns.xlsx');
 
     const t1 = performance.now();
     const duration = (t1 - t0).toFixed(2)
