@@ -74,6 +74,7 @@ body {
 
 #stats-body {
     max-width: 1000px;
+    /* wide enough for all items */
     margin: 0 auto 15px auto;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -82,6 +83,7 @@ body {
     padding: 15px;
     border-radius: 6px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    align-items: center;
 }
 
 .stat-item {
@@ -113,8 +115,10 @@ body {
 .stat-reports {
     display: flex;
     gap: 8px;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
 }
 
 .stat-reports button {
@@ -130,6 +134,13 @@ body {
 
 .stat-reports button:hover {
     background: #7d96a1;
+}
+
+.export-stats {
+    font-size: 13px;
+    color: #444;
+    margin-left: 10px;
+    white-space: nowrap;
 }
 
 

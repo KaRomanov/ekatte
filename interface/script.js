@@ -16,7 +16,7 @@ document.getElementById('export-excel')
 
 async function initTable() {
     try {
-        clearError();
+        clearFields();
         const data = await fetchTowns();
         const rowCounts = await fetchStats();
 
@@ -51,10 +51,12 @@ function handleError(err) {
 }
 
 
-function clearError() {
+function clearFields() {
     const errorDiv = document.getElementById('table-error');
     errorDiv.textContent = '';
     errorDiv.style.display = 'none';
+    const exportTime = document.getElementById('export-time');
+    exportTime.textContent = '';
 }
 
 

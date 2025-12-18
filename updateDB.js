@@ -148,6 +148,6 @@ export const populateDB = async () => {
         console.error('Error during insert sequence:', err.message);
         console.log('Transaction rolled back!');
     } finally {
-        await client.release();
+        client.release();
     }
 }
