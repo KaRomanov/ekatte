@@ -1,6 +1,6 @@
 import { jest, test, expect, beforeEach } from '@jest/globals';
 import fs from 'fs/promises';
-import { getFile, downloadFiles } from '../downloadFiles.js';
+import { getFile, downloadFiles } from '../helpers/downloadFiles.js';
 import fetchMock from 'jest-fetch-mock';
 
 fetchMock.enableMocks();

@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import { loadJsonFile } from '../helper.js';
+import { loadJsonFile } from '../helpers/helper.js';
 
 jest.mock("fs/promises")
 import fs from 'fs/promises';

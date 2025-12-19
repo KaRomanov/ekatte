@@ -1,5 +1,5 @@
-import { downloadFiles } from './downloadFiles.js';
-import { populateDB } from './updateDB.js';
+import { downloadFiles } from './helpers/downloadFiles.js';
+import { populateDB } from './helpers/updateDB.js';
 
 const files = [
     { fileUrl: 'https://www.nsi.bg/nrnm/ekatte/territorial-units/json', fileDest: './src/towns.json' },

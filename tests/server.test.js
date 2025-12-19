@@ -5,7 +5,7 @@ import http from 'http';
 const mockGetTownsByCriteria = jest.fn();
 const mockGetTablesRowCounts = jest.fn();
 
-jest.unstable_mockModule('../serverFunctions.js', () => ({
+jest.unstable_mockModule('../helpers/serverFunctions.js', () => ({
     getTownsByCriteria: mockGetTownsByCriteria,
     getTablesRowCounts: mockGetTablesRowCounts
 }));

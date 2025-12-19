@@ -1,4 +1,4 @@
-import { getClient } from './db/index.js';
+import { getClient } from '../db/index.js';
 import {
     insertMunicipalities, insertRegions,
     insertTownhalls, insertTowns

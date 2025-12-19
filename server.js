@@ -1,6 +1,6 @@
 import http from 'http';
 import url from 'url';
-import { getTownsByCriteria, getTablesRowCounts } from './serverFunctions.js';
+import { getTownsByCriteria, getTablesRowCounts } from './helpers/serverFunctions.js';
 
 const server = http.createServer();
 const PORT = 3000;

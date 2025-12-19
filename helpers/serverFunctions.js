@@ -1,4 +1,4 @@
-import { query } from './db/index.js';
+import { query } from '../db/index.js';
 
 export const getTownsByCriteria = async (params) => {
     const sql = `SELECT t.id, t.type, t.name_bg as town, th.id as townhall, m.name_bg as municipality,m.id as municipality_id, r.name_bg as region

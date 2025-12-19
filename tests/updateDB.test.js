@@ -4,16 +4,16 @@ jest.unstable_mockModule('../db/index.js', () => ({
     getClient: jest.fn()
 }));
 
-jest.unstable_mockModule('../inserts.js', () => ({
+jest.unstable_mockModule('../helpers/inserts.js', () => ({
     insertRegions: jest.fn(),
     insertMunicipalities: jest.fn(),
     insertTownhalls: jest.fn(),
     insertTowns: jest.fn()
 }));
 
-const { populateDB } = await import('../updateDB.js');
+const { populateDB } = await import('../helpers/updateDB.js');
 const db = await import('../db/index.js');
-const inserts = await import('../inserts.js');
+const inserts = await import('../helpers/inserts.js');
 
 describe('populateDB function', () => {
     let mockClient;

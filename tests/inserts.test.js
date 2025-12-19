@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 const mockLoadJsonFile = jest.fn();
 
-jest.unstable_mockModule('../helper.js', () => ({
+jest.unstable_mockModule('../helpers/helper.js', () => ({
     loadJsonFile: mockLoadJsonFile
 }));
 
@@ -15,7 +15,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-const { insertRegions, insertMunicipalities, insertTownhalls, insertTowns } = await import('../inserts.js');
+const { insertRegions, insertMunicipalities, insertTownhalls, insertTowns } = await import('../helpers/inserts.js');
 
 describe('insertRegions', () => {
 

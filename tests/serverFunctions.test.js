@@ -10,7 +10,7 @@ const {
     getTownsByCriteria,
     getRowCount,
     getTablesRowCounts
-} = await import('../serverFunctions.js');
+} = await import('../helpers/serverFunctions.js');
 
 describe('getTownsByCriteria', () => {
     afterEach(() => {

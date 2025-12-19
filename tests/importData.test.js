@@ -21,10 +21,10 @@ describe('main script', () => {
         mockPopulateDB.mockResolvedValue();
 
         await jest.isolateModulesAsync(async () => {
-            jest.unstable_mockModule('../downloadFiles.js', () => ({
+            jest.unstable_mockModule('../helpers/downloadFiles.js', () => ({
                 downloadFiles: mockDownloadFiles
             }));
-            jest.unstable_mockModule('../updateDB.js', () => ({
+            jest.unstable_mockModule('../helpers/updateDB.js', () => ({
                 populateDB: mockPopulateDB
             }));
 
@@ -41,10 +41,10 @@ describe('main script', () => {
         mockDownloadFiles.mockRejectedValue(testError);
 
         await jest.isolateModulesAsync(async () => {
-            jest.unstable_mockModule('../downloadFiles.js', () => ({
+            jest.unstable_mockModule('../helpers/downloadFiles.js', () => ({
                 downloadFiles: mockDownloadFiles
             }));
-            jest.unstable_mockModule('../updateDB.js', () => ({
+            jest.unstable_mockModule('../helpers/updateDB.js', () => ({
                 populateDB: mockPopulateDB
             }));
 
@@ -62,10 +62,10 @@ describe('main script', () => {
         mockPopulateDB.mockRejectedValue(testError);
 
         await jest.isolateModulesAsync(async () => {
-            jest.unstable_mockModule('../downloadFiles.js', () => ({
+            jest.unstable_mockModule('../helpers/downloadFiles.js', () => ({
                 downloadFiles: mockDownloadFiles
             }));
-            jest.unstable_mockModule('../updateDB.js', () => ({
+            jest.unstable_mockModule('../helpers/updateDB.js', () => ({
                 populateDB: mockPopulateDB
             }));
 
