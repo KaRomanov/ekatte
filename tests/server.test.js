@@ -45,9 +45,13 @@ describe('API tests', () => {
     test('GET /towns returns 500 on error', async () => {
         mockGetTownsByCriteria.mockRejectedValueOnce(new Error('DB failure'));
 
-        await request(server)
-            .get('/towns')
-            .expect(500);
+        await request(server).get('/towns').expect(500);
+    });
+
+    test('GET /tables return 500 on error', async () => {
+        mockGetTablesRowCounts.mockRejectedValueOnce(new Error('DB failure'));
+
+        await request(server).get('/tables').expect(500);
     });
 
     test('GET /tables returns table row counts', async () => {
