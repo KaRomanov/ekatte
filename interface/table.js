@@ -1,8 +1,8 @@
-let allRows = [];
-let currentPage = 1;
-const rowsPerPage = 20;
+export let allRows = [];
+export let currentPage = 1;
+export const rowsPerPage = 20;
 const buttonsNum = 3;
-let sortState = [];
+export let sortState = [];
 
 export function getRowsState() {
     return allRows;
@@ -35,7 +35,7 @@ export function renderPage() {
 }
 
 
-function createPageButton(page) {
+export function createPageButton(page) {
     const btn = document.createElement('button');
     btn.textContent = page;
 
@@ -166,17 +166,3 @@ export function initSorting() {
         });
     });
 }
-
-
-document.getElementById('first').addEventListener('click', () => {
-    currentPage = 1;
-    renderPage();
-    setupPagination();
-});
-
-
-document.getElementById('last').addEventListener('click', () => {
-    currentPage = getPagesNum();
-    renderPage();
-    setupPagination();
-});
