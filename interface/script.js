@@ -90,3 +90,10 @@ document.getElementById('search-form').addEventListener('reset', async (event) =
     event.preventDefault();
     await initTable();
 });
+
+export function showTime(duration) {
+    const exportTimeSpan = document.getElementById('export-time');
+    if (exportTimeSpan) {
+        exportTimeSpan.textContent = `Export took ${duration} ms`;
+    }
+}

@@ -1,10 +1,5 @@
+import { showTime } from "./script.js";
 
-function showTime(duration) {
-    const exportTimeSpan = document.getElementById('export-time');
-    if (exportTimeSpan) {
-        exportTimeSpan.textContent = `Export took ${duration} ms`;
-    }
-}
 
 export function exportCSV(rows) {
     const t0 = performance.now();
