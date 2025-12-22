@@ -1,6 +1,7 @@
 import { getPagesNum, setCurrentPage } from './table.state.js';
 import { renderPage } from './table.render.js';
 
+
 export function createPageButton(page) {
     const btn = document.createElement('button');
     btn.textContent = page;
@@ -13,6 +14,7 @@ export function createPageButton(page) {
 
     return btn;
 }
+
 
 export function setupPagination() {
     const pageNumbers = document.getElementById('pageNumbers');

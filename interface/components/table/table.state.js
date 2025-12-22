@@ -7,6 +7,7 @@ export function getSortState() {
     return sortState;
 }
 
+
 export function setSortState(newState = []) {
     sortState.length = 0;
     if (Array.isArray(newState) && newState.length) {
@@ -14,23 +15,28 @@ export function setSortState(newState = []) {
     }
 }
 
+
 export function getRowsState() {
     return allRows;
 }
+
 
 export function getPagesNum(rows = allRows, perPage = rowsPerPage) {
     return Math.ceil(rows.length / perPage);
 }
 
+
 export function setCurrentPage(page) {
     currentPage = page;
 }
+
 
 export function populateTable(data) {
     allRows = data.rows;
     currentPage = 1;
     sortState = [];
 }
+
 
 export default {
     allRows,

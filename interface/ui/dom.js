@@ -11,10 +11,12 @@ export function addRowCounts(rowCounts) {
     if (el4) el4.textContent = rowCounts.regions;
 }
 
+
 export function updateRowCount(num) {
     const el = document.getElementById('rows-count');
     if (el) el.textContent = num;
 }
+
 
 export function handleError(err) {
     console.error('Error fetching data:', err);
@@ -27,6 +29,7 @@ export function handleError(err) {
     if (tbody) tbody.innerHTML = '';
 }
 
+
 export function clearFields() {
     const errorDiv = document.getElementById('table-error');
     if (errorDiv) {
@@ -37,12 +40,14 @@ export function clearFields() {
     if (exportTime) exportTime.textContent = '';
 }
 
+
 export function showTime(duration) {
     const exportTimeSpan = document.getElementById('export-time');
     if (exportTimeSpan) {
         exportTimeSpan.textContent = `Export took ${duration} ms`;
     }
 }
+
 
 export default {
     addRowCounts,

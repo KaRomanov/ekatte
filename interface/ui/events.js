@@ -4,6 +4,7 @@ import { getRowsState, setCurrentPage, renderPage, setupPagination, getPagesNum,
 import { updateRowCount } from "./dom.js";
 import { initTable } from "./init.js";
 
+
 export function setupEventListeners() {
     const csvBtn = document.getElementById('export-csv');
     if (csvBtn) csvBtn.addEventListener('click', () => exportCSV(getRowsState()));
@@ -52,5 +53,6 @@ export function setupEventListeners() {
         });
     }
 }
+
 
 export default setupEventListeners;

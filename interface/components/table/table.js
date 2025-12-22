@@ -9,17 +9,21 @@ export const currentPage = state.currentPage;
 export const rowsPerPage = state.rowsPerPage;
 export const sortState = state.sortState;
 
+
 export function getRowsState() {
     return state.getRowsState();
 }
+
 
 export function getPagesNum(rows = state.allRows, perPage = state.rowsPerPage) {
     return state.getPagesNum(rows, perPage);
 }
 
+
 export function setCurrentPage(page) {
     return state.setCurrentPage(page);
 }
+
 
 export function populateTable(data) {
     state.populateTable(data);
@@ -27,6 +31,7 @@ export function populateTable(data) {
     setupPagination();
     updateSortIndicators();
 }
+
 
 export { renderPage } from './table.render.js';
 export { setupPagination, createPageButton } from './table.pagination.js';

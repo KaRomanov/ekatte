@@ -1,6 +1,8 @@
 import { jest } from '@jest/globals';
 
-import { getCorrectSortValue, updateSortIndicators, sortState, getPagesNum, handleSortClick } from '../interface/components/table/table.sorting.js';
+import { getVal, updateSortIndicators, handleSortClick } from '../interface/components/table/table.sorting.js';
+import * as state from '../interface/components/table/table.state.js';
+import { getPagesNum } from '../interface/components/table/table.state.js';
 
 describe('getPagesNum', () => {
 
@@ -29,28 +31,28 @@ describe('getPagesNum', () => {
     });
 });
 
-describe('getCorrectSortValue', () => {
+describe('get correct sort value', () => {
     test('should return lowercased string if value is string', () => {
         const row = { name: 'Alice', age: 30 };
-        const value = getCorrectSortValue(row, 'name');
+        const value = getVal(row, 'name');
         expect(value).toBe('alice');
     });
 
     test('should return number as-is', () => {
         const row = { name: 'Bob', age: 42 };
-        const value = getCorrectSortValue(row, 'age');
+        const value = getVal(row, 'age');
         expect(value).toBe(42);
     });
 
     test('should return empty string for missing key', () => {
         const row = { name: 'Charlie' };
-        const value = getCorrectSortValue(row, 'age');
+        const value = getVal(row, 'age');
         expect(value).toBe('');
     });
 
     test('should return empty string for null value', () => {
         const row = { name: null };
-        const value = getCorrectSortValue(row, 'name');
+        const value = getVal(row, 'name');
         expect(value).toBe('');
     });
 });
@@ -77,11 +79,11 @@ describe('updateSortIndicators', () => {
         thTown = document.querySelector('th[data-key="town"]');
         thRegion = document.querySelector('th[data-key="region"]');
 
-        sortState.length = 0;
-        sortState.push(
+        state.setSortState([]);
+        state.setSortState([
             { key: 'id', dir: 'asc' },
             { key: 'town', dir: 'desc' }
-        );
+        ]);
     });
 
     test('should remove old sort classes before applying new ones', () => {
@@ -112,7 +114,7 @@ describe('updateSortIndicators', () => {
     });
 
     test('should do nothing if th element for key does not exist', () => {
-        sortState.push({ key: 'nonexistent', dir: 'asc' });
+        state.setSortState([...state.getSortState(), { key: 'nonexistent', dir: 'asc' }]);
         expect(() => updateSortIndicators()).not.toThrow();
 
         expect(thId.classList.contains('sorted-asc')).toBe(true);

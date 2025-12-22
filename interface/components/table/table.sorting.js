@@ -2,11 +2,12 @@ import * as state from './table.state.js';
 import { renderPage } from './table.render.js';
 import { setupPagination } from './table.pagination.js';
 
-const getVal = (row, key) => {
-    const v = row[key];
-    if (v == null) return '';
-    return typeof v === 'string' ? v.toLowerCase() : v;
+export const getVal = (row, key) => {
+    const val = row[key];
+    if (val == null) return '';
+    return typeof val === 'string' ? val.toLowerCase() : val;
 };
+
 
 export function applySort(sort = state.sortState) {
     if (!sort || sort.length === 0) return;
@@ -23,8 +24,9 @@ export function applySort(sort = state.sortState) {
 
     renderPage();
     setupPagination();
-    updateSortIndicators(sort);
+    updateSortIndicators();
 }
+
 
 export function updateSortIndicators(sort = state.sortState) {
     document.querySelectorAll('th[data-key]').forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
