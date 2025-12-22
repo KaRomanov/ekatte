@@ -1,6 +1,33 @@
 import { jest } from '@jest/globals';
 
-import { getCorrectSortValue, updateSortIndicators, sortState } from '../interface/table.js';
+import { getCorrectSortValue, updateSortIndicators, sortState, getPagesNum, handleSortClick } from '../interface/table.js';
+
+describe('getPagesNum', () => {
+
+    test('returns 0 if there are no rows', () => {
+        const rows = [];
+        const perPage = 5;
+        expect(getPagesNum(rows, perPage)).toBe(0);
+    });
+
+    test('returns 1 if rows are fewer than rowsPerPage', () => {
+        const rows = [{}, {}, {}];
+        const perPage = 5;
+        expect(getPagesNum(rows, perPage)).toBe(1);
+    });
+
+    test('returns correct number of pages for exact multiple', () => {
+        const rows = new Array(10).fill({});
+        const perPage = 5;
+        expect(getPagesNum(rows, perPage)).toBe(2);
+    });
+
+    test('returns correct number of pages for non-exact multiple', () => {
+        const rows = new Array(12).fill({});
+        const perPage = 5;
+        expect(getPagesNum(rows, perPage)).toBe(3);
+    });
+});
 
 describe('getCorrectSortValue', () => {
     test('should return lowercased string if value is string', () => {

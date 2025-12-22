@@ -52,14 +52,17 @@ export function setupEventListeners() {
 }
 
 
-document.addEventListener('DOMContentLoaded', async () => {
+export async function onDomReady() {
     await initTable();
     initSorting();
     setupEventListeners();
-});
+}
 
 
-async function initTable() {
+document.addEventListener('DOMContentLoaded', onDomReady);
+
+
+export async function initTable() {
     try {
         clearFields();
         const data = await fetchTowns();
@@ -82,10 +85,12 @@ export function addRowCounts(rowCounts) {
     document.getElementById('regions-count').textContent = rowCounts.regions;
 }
 
+
 export function updateRowCount(num) {
     const el = document.getElementById('rows-count');
     if (el) el.textContent = num;
 }
+
 
 export function handleError(err) {
     console.error('Error fetching data:', err);

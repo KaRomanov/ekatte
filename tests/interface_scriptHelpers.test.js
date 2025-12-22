@@ -1,6 +1,9 @@
 import { jest } from '@jest/globals';
 
-import { addRowCounts, updateRowCount, handleError, clearFields } from '../interface/script.js';
+import {
+    addRowCounts, updateRowCount,
+    handleError, clearFields, showTime
+} from '../interface/script.js';
 
 describe('DOM manipulation functions', () => {
     beforeEach(() => {
@@ -88,5 +91,20 @@ describe('DOM manipulation functions', () => {
             expect(errorDiv.style.display).toBe('none');
             expect(exportTime.textContent).toBe('');
         });
+    });
+});
+
+describe('showTime', () => {
+    test('should write formatted export time', () => {
+        showTime('12.34');
+
+        const exportTime = document.getElementById('export-time');
+        expect(exportTime.textContent).toBe('Export took 12.34 ms');
+    });
+
+    test('should not throw if export-time element does not exist', () => {
+        document.getElementById('export-time').remove();
+
+        expect(() => showTime('5')).not.toThrow();
     });
 });

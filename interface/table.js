@@ -4,12 +4,14 @@ export const rowsPerPage = 20;
 const buttonsNum = 3;
 export let sortState = [];
 
+
 export function getRowsState() {
     return allRows;
 }
 
-function getPagesNum() {
-    return Math.ceil(allRows.length / rowsPerPage);
+
+export function getPagesNum(rows = allRows, perPage = rowsPerPage) {
+    return Math.ceil(rows.length / perPage);
 }
 
 
