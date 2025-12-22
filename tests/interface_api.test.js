@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { fixData, fetchTowns, fetchStats } from '../interface/api.js';
+import { fixData, fetchTowns, fetchStats } from '../interface/components/api.js';
 
 const HOST = 'http://127.0.0.1:3000';
 

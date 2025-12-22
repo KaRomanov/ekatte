@@ -22,6 +22,7 @@ export async function fetchTowns(params = {}) {
     return data;
 }
 
+
 export async function fetchStats() {
     return await (await fetch(HOST + '/tables')).json();
 }

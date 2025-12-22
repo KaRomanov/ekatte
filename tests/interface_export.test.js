@@ -1,13 +1,13 @@
 import { jest } from '@jest/globals';
 
 
-jest.unstable_mockModule('../interface/script.js', async () => ({
+jest.unstable_mockModule('../interface/ui/dom.js', async () => ({
     showTime: jest.fn(),
 }));
 
 
-const { exportCSV, exportExcel } = await import('../interface/export.js');
-const { showTime } = await import('../interface/script.js');
+const { exportCSV, exportExcel } = await import('../interface/components/export.js');
+const { showTime } = await import('../interface/ui/dom.js');
 
 
 describe('exportCSV', () => {

@@ -1,4 +1,4 @@
-import { showTime } from "./script.js";
+import { showTime } from "../ui/dom.js";
 
 
 export function exportCSV(rows) {
@@ -25,6 +25,7 @@ export function exportCSV(rows) {
     const duration = (t1 - t0).toFixed(2)
     showTime(duration);
 }
+
 
 export function exportExcel(rows) {
     const t0 = performance.now();

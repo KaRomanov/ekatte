@@ -3,7 +3,7 @@ import { jest } from '@jest/globals';
 import {
     addRowCounts, updateRowCount,
     handleError, clearFields, showTime
-} from '../interface/script.js';
+} from '../interface/ui/dom.js';
 
 describe('DOM manipulation functions', () => {
     beforeEach(() => {

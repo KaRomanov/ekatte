@@ -8,7 +8,7 @@ afterEach(() => {
     jest.restoreAllMocks();
 });
 
-import { getRowsState, renderPage, allRows, rowsPerPage, currentPage } from '../interface/table.js';
+import { getRowsState, renderPage, allRows, rowsPerPage, currentPage } from '../interface/components/table/table.js';
 
 global.allRows = [
     { id: 1, type: 'A', town: 'Town1', townhall: 'TH1', municipality: 'M1', municipality_id: '001', region: 'R1' },

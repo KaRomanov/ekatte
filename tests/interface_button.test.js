@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { getCorrectSortValue, updateSortIndicators, sortState, getPagesNum, handleSortClick } from '../interface/table.js';
+import { getCorrectSortValue, updateSortIndicators, sortState, getPagesNum, handleSortClick } from '../interface/components/table/table.sorting.js';
 
 describe('getPagesNum', () => {
 
