@@ -157,3 +157,21 @@ export const getSettlementsByCriteria = async (params) => {
     }
 
 }
+
+export const deleteEntry = async (table, id) => {
+
+    if (!['regions', 'municipalities', 'townhalls', 'towns'].includes(table)) {
+        throw new Error('Invalid table name');
+    }
+
+    const sql = `DELETE FROM ${table} WHERE id = $1`;
+    const values = [id];
+
+    try {
+        const res = await query(sql, values);
+        return { success: res.rowCount > 0 };
+    } catch (err) {
+        console.error(err);
+        throw new Error('DB query failed');
+    }
+}

@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchSettlements, fetchStats } from "../../components/api.js";
+import { fetchSettlements, fetchStats, deleteEntry } from "../../components/api.js";
 
 
 async function initSettlements() {
@@ -134,6 +134,12 @@ async function addSettlement() {
         return;
     }
 
+    if (params.id.length !== 5) {
+        alert('ID-то на населеното място трябва да е точно 5 символа!');
+        return;
+    }
+
+
     try {
         //finish
         throw new Error('Not implemented yet');
@@ -177,10 +183,19 @@ async function deleteSettlement() {
         return;
     }
 
+    if (id.length !== 5) {
+        alert('ID-то на населеното място трябва да е точно 5 символа!');
+        return;
+    }
+
     try {
 
-        //finish
+        const res = await deleteEntry('settlements', id);
 
+        if (res.success) {
+            alert(`Населеното място с ID ${id} беше изтрито успешно.`);
+            await initSettlements();
+        }
     } catch (err) {
         handleError(err);
     }

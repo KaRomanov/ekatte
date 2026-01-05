@@ -1,10 +1,9 @@
 import http from 'http';
 import url from 'url';
 import {
-    getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria,
+    getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria, deleteEntry,
     getMunicipalitiesByCriteria, getTownhallsByCriteria, getSettlementsByCriteria
 } from './helpers/serverFunctions.js';
-import path from 'path';
 
 const server = http.createServer();
 const PORT = 3000;
@@ -173,33 +172,85 @@ server.on('request', async (req, res) => {
     } else if (req.method === 'DELETE') {
         //delete entries
         const id = pathParts[1];
-        console.log('Deleting ID:', id);
+
         if (!id) {
             return res.statusCode = 404, res.end();
         }
 
         if (pathName === 'settlements') {
-            //delete    
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await deleteEntry('towns', id);
+                console.log('API return: ', req.method, parsedURL.path);
+
+                return res.statusCode = 200, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
+
+
 
         } else if (pathName === 'townhalls') {
-            //delete 
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await deleteEntry('townhalls', id);
+                console.log('API return: ', req.method, parsedURL.path);
+
+                return res.statusCode = 200, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
+
+
 
         } else if (pathName === 'municipalities') {
-            //delete
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await deleteEntry('municipalities', id);
+                console.log('API return: ', req.method, parsedURL.path);
+                return res.statusCode = 200, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
 
         } else if (pathName === 'regions') {
-            //delete
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await deleteEntry('regions', id);
+                console.log('API return: ', req.method, parsedURL.path);
+
+                return res.statusCode = 200, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
+
+
 
         } else {
-            return res.statusCode = 404, res.end();
+            return res.statusCode = 404, res.end(JSON.stringify({
+                success: false,
+                error: err.message || 'Internal Server Error'
+            }));
         }
 
     } else if (req.method === 'PUT') {

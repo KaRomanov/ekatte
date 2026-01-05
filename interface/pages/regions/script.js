@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchRegions, fetchStats } from "../../components/api.js";
+import { fetchRegions, fetchStats, deleteEntry } from "../../components/api.js";
 
 
 async function initRegions() {
@@ -168,8 +168,18 @@ async function deleteRegion() {
         return;
     }
 
+    if (id.length !== 3) {
+        alert('ID-то на региона трябва да е точно 3 символа!');
+        return;
+    }
+
     try {
-        //finish
+        const res = await deleteEntry('regions', id);
+
+        if (res.success) {
+            alert(`Регионът с ID ${id} беше изтрит успешно.`);
+            await initRegions();
+        }
     } catch (err) {
         handleError(err);
     }

@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchTownhalls, fetchStats } from "../../components/api.js";
+import { fetchTownhalls, fetchStats, deleteEntry } from "../../components/api.js";
 
 
 async function initTownhalls() {
@@ -170,8 +170,18 @@ async function deleteTownhall() {
         return;
     }
 
+    if (id.length !== 8) {
+        alert('ID-то на общината трябва да е точно 8 символа!');
+        return;
+    }
+
     try {
-        //finish
+        const res = await deleteEntry('townhalls', id);
+
+        if (res.success) {
+            alert(`Общината с ID ${id} беше изтрита успешно.`);
+            await initTownhalls();
+        }
     } catch (err) {
         handleError(err);
     }

@@ -76,7 +76,34 @@ export async function fetchSettlements(params = {}) {
             apiUrl.searchParams.append(key, params[key]);
         }
     }
-    
+
     const data = await (await fetch(apiUrl)).json();
+    return data;
+}
+
+export async function deleteEntry(endpoint, id) {
+
+    const apiUrl = new URL(HOST + `/${endpoint}/${id}`);
+
+    const response = await fetch(apiUrl, {
+        method: 'DELETE'
+    });
+
+    let data;
+    try {
+        data = await response.json();
+    } catch {
+        data = await response.text();
+    }
+
+    if (!response.ok) {
+        const errorMessage =
+            typeof data === 'string'
+                ? data
+                : data?.error || 'Request failed';
+
+        throw new Error(errorMessage);
+    }
+
     return data;
 }

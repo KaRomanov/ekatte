@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchMunicipalities, fetchStats } from "../../components/api.js";
+import { fetchMunicipalities, fetchStats, deleteEntry } from "../../components/api.js";
 
 
 async function initMunicipalities() {
@@ -172,8 +172,19 @@ async function deleteMunicipality() {
         return;
     }
 
+    if (id.length !== 5) {
+        alert('ID-то на общината трябва да е точно 5 символа!');
+        return;
+    }
+
     try {
-        //finish
+        const res = await deleteEntry('municipalities', id);
+
+        if (res.success) {
+            alert(`Общината с ID ${id} беше изтрита успешно.`);
+            await initMunicipalities();
+        }
+
     } catch (err) {
         handleError(err);
     }
