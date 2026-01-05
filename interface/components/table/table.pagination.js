@@ -1,22 +1,22 @@
-import { getPagesNum, setCurrentPage } from './table.state.js';
+import { getPagesNum, setCurrentPage, currentPage } from './table.state.js';
 import { renderPage } from './table.render.js';
 
 
-export function createPageButton(page) {
+export function createPageButton(page, renderFn = renderPage) {
     const btn = document.createElement('button');
     btn.textContent = page;
 
     btn.addEventListener('click', () => {
         setCurrentPage(page);
-        renderPage();
-        setupPagination();
+        renderFn();
+        setupPagination(renderFn);
     });
 
     return btn;
 }
 
 
-export function setupPagination() {
+export function setupPagination(renderFn = renderPage) {
     const pageNumbers = document.getElementById('pageNumbers');
     if (!pageNumbers) return;
     pageNumbers.innerHTML = '';
@@ -24,10 +24,7 @@ export function setupPagination() {
     const totalPages = getPagesNum();
     if (totalPages <= 1) return;
 
-    const current = (function () {
-        const active = pageNumbers.getAttribute('data-current');
-        return active ? Number(active) : 1;
-    })();
+    const current = typeof currentPage === 'number' && currentPage > 0 ? currentPage : 1;
 
     const start = Math.max(1, current - 3);
     const end = Math.min(totalPages, current + 3);
@@ -37,7 +34,7 @@ export function setupPagination() {
     }
 
     for (let i = start; i <= end; i++) {
-        const b = createPageButton(i);
+        const b = createPageButton(i, renderFn);
         if (i === current) {
             b.className = 'active';
             b.disabled = true;

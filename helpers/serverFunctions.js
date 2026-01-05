@@ -51,3 +51,26 @@ export const getTablesRowCounts = async () => {
 
     return result;
 };
+
+export const getRegionsByCriteria = async (params) => {
+    const sql = `SELECT id, name_bg, name_en, region_center_id
+        FROM regions
+        WHERE ($1 = '' OR name_bg ~* $1 OR name_en ~* $1)
+            AND ($2 = '' OR id::text = $2)
+            AND ($3 = '' OR region_center_id::text = $3)`;
+
+    const values = [
+        params.name || '',
+        params.id || '',
+        params.region_center_id || ''
+    ];
+
+    try {
+        const res = await query(sql, values);
+        const formattedRes = { rowCount: res.rowCount, rows: res.rows };
+        return formattedRes;
+    } catch (err) {
+        console.error(err);
+        throw new Error('DB query failed');
+    }
+}

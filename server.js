@@ -1,6 +1,7 @@
 import http from 'http';
 import url from 'url';
-import { getTownsByCriteria, getTablesRowCounts } from './helpers/serverFunctions.js';
+import { getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria } from './helpers/serverFunctions.js';
+import path from 'path';
 
 const server = http.createServer();
 const PORT = 3000;
@@ -41,6 +42,23 @@ server.on('request', async (req, res) => {
         try {
             const data = await getTablesRowCounts();
             res.setHeader('Content-Type', 'application/json');
+            return res.end(JSON.stringify(data));
+        } catch (err) {
+            console.error(err);
+            return res.statusCode = 500, res.end();
+        }
+    } else if (pathName === '/regions') {
+
+        const params = {
+            id: parsedURL.query.id || '',
+            name: parsedURL.query.name || '',
+            region_center_id: parsedURL.query.region_center_id || ''
+        };
+
+        try {
+            const data = await getRegionsByCriteria(params);
+            res.setHeader('Content-Type', 'application/json');
+            console.log('API return: ', parsedURL.path);
             return res.end(JSON.stringify(data));
         } catch (err) {
             console.error(err);
