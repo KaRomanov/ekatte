@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const params = {
                 id: document.getElementById('id').value.trim(),
-                name: document.getElementById('name').value.trim(),
+                name_en: document.getElementById('name_en').value.trim(),
+                name_bg: document.getElementById('name_bg').value.trim(),
                 region_center_id: document.getElementById('region_center_id').value.trim()
             };
 
@@ -56,6 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('reset', async (ev) => {
             ev.preventDefault();
             await initRegions();
+        });
+
+        document.getElementById('new-region').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await addRegion();
+        });
+
+        document.getElementById('edit-region').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await editRegion();
+        });
+
+        document.getElementById('delete-region').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteRegion();
         });
 
     }
@@ -94,6 +110,68 @@ function renderRegionsPage() {
             <td>${row.region_center_id ?? ''}</td>
         `;
         tbody.appendChild(tr);
+    }
+}
+
+
+async function addRegion() {
+
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        region_center_id: document.getElementById('region_center_id').value.trim()
+    };
+
+    if (!params.id || !params.name_en || !params.name_bg || !params.region_center_id) {
+        alert('Моля, попълнете всички полета преди да добавите нов регион.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
+}
+
+
+async function editRegion() {
+
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        region_center_id: document.getElementById('region_center_id').value.trim()
+    };
+
+    if (!params.id) {
+        alert('Моля, попълнете ID на региона, който искате да редактирате.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+}
+
+
+async function deleteRegion() {
+
+    const id = document.getElementById('id').value.trim();
+
+    if (!id) {
+        alert('Моля, въведете ID на региона, който искате да изтриете.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
     }
 }
 

@@ -22,7 +22,7 @@ export function handleError(err) {
     console.error('Error fetching data:', err);
     const errorDiv = document.getElementById('table-error');
     if (errorDiv) {
-        errorDiv.textContent = 'Неуспешно зареждане на данните';
+        errorDiv.textContent = err.message;
         errorDiv.style.display = 'block';
     }
     const tbody = document.getElementById('table-tbody');

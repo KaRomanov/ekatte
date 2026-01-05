@@ -27,20 +27,25 @@ async function initSettlements() {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
     initSettlements();
 
     const form = document.getElementById('search-form');
+
     if (form) {
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
+
             const params = {
                 id: document.getElementById('id').value.trim(),
                 type: document.getElementById('type').value.trim(),
-                name: document.getElementById('name').value.trim(),
+                name_en: document.getElementById('name_en').value.trim(),
+                name_bg: document.getElementById('name_bg').value.trim(),
                 townhall_id: document.getElementById('townhall_id').value.trim(),
                 municipality_id: document.getElementById('municipality_id').value.trim()
             };
+
             const data = await fetchSettlements(params);
             statePopulate(data);
             renderSettlementsPage();
@@ -52,6 +57,21 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('reset', async (ev) => {
             ev.preventDefault();
             await initSettlements();
+        });
+
+        document.getElementById('new-settlement').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await addSettlement();
+        });
+
+        document.getElementById('edit-settlement').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await editSettlement();
+        });
+
+        document.getElementById('delete-settlement').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteSettlement();
         });
 
     }
@@ -72,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+
 
 function renderSettlementsPage() {
     const tbody = document.getElementById('table-tbody');
@@ -94,6 +115,76 @@ function renderSettlementsPage() {
         `;
         tbody.appendChild(tr);
     }
+}
+
+
+async function addSettlement() {
+
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        type: document.getElementById('type').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        townhall_id: document.getElementById('townhall_id').value.trim(),
+        municipality_id: document.getElementById('municipality_id').value.trim()
+    };
+
+    if (!params.name_en || !params.name_bg || !params.type || !params.municipality_id) {
+        alert('Моля попълнете задължителните полета: Име (EN), Име (BG), Тип и Община ID!');
+        return;
+    }
+
+    try {
+        //finish
+        throw new Error('Not implemented yet');
+    } catch (err) {
+        handleError(err);
+    }
+
+}
+
+
+async function editSettlement() {
+
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        type: document.getElementById('type').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        townhall_id: document.getElementById('townhall_id').value.trim(),
+        municipality_id: document.getElementById('municipality_id').value.trim()
+    };
+
+    if (!params.id) {
+        alert('Моля въведете ID на населеното място, което искате да редактирате!');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
+}
+
+
+async function deleteSettlement() {
+    const id = document.getElementById('id').value.trim();
+
+    if (!id) {
+        alert('Моля въведете ID на населеното място, което искате да изтриете!');
+        return;
+    }
+
+    try {
+
+        //finish
+
+    } catch (err) {
+        handleError(err);
+    }
+
 }
 
 export default initSettlements;

@@ -32,13 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initTownhalls();
 
     const form = document.getElementById('search-form');
+
     if (form) {
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
 
             const params = {
                 id: document.getElementById('id').value.trim(),
-                name: document.getElementById('name').value.trim(),
+                name_en: document.getElementById('name_en').value.trim(),
+                name_bg: document.getElementById('name_bg').value.trim(),
                 municipality_id: document.getElementById('municipality_id').value.trim(),
                 townhall_center_id: document.getElementById('townhall_center_id').value.trim()
             };
@@ -54,6 +56,21 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('reset', async (ev) => {
             ev.preventDefault();
             await initTownhalls();
+        });
+
+        document.getElementById('new-townhall').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await addTownhall();
+        });
+
+        document.getElementById('edit-townhall').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await editTownhall();
+        });
+
+        document.getElementById('delete-townhall').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteTownhall();
         });
 
     }
@@ -72,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTownhallsPage();
         setupPagination(renderTownhallsPage);
     });
-    
+
 });
 
 function renderTownhallsPage() {
@@ -95,6 +112,70 @@ function renderTownhallsPage() {
         `;
         tbody.appendChild(tr);
     }
+}
+
+
+async function addTownhall() {
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        municipality_id: document.getElementById('municipality_id').value.trim(),
+        townhall_center_id: document.getElementById('townhall_center_id').value.trim()
+    };
+
+    if (!params.id || !params.name_en || !params.name_bg || !params.municipality_id || !params.townhall_center_id) {
+        alert('Моля, попълнете всички полета, за да добавите нова община.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
+}
+
+
+async function editTownhall() {
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        municipality_id: document.getElementById('municipality_id').value.trim(),
+        townhall_center_id: document.getElementById('townhall_center_id').value.trim()
+    };
+
+    if (!params.id) {
+        alert('Моля, въведете ID на общината, която искате да редактирате.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
+}
+
+
+async function deleteTownhall() {
+
+    const id = document.getElementById('id').value.trim();
+
+    if (!id) {
+        alert('Моля, въведете ID на общината, която искате да изтриете.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
 }
 
 export default initTownhalls;

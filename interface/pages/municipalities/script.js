@@ -32,13 +32,15 @@ document.addEventListener('DOMContentLoaded', () => {
     initMunicipalities();
 
     const form = document.getElementById('search-form');
+
     if (form) {
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
 
             const params = {
                 id: document.getElementById('id').value.trim(),
-                name: document.getElementById('name').value.trim(),
+                name_en: document.getElementById('name_en').value.trim(),
+                name_bg: document.getElementById('name_bg').value.trim(),
                 region_id: document.getElementById('region_id').value.trim(),
                 municipality_center_id: document.getElementById('municipality_center_id').value.trim()
             };
@@ -54,6 +56,21 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('reset', async (ev) => {
             ev.preventDefault();
             await initMunicipalities();
+        });
+
+        document.getElementById('new-municipality').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await addMunicipality();
+        });
+
+        document.getElementById('edit-municipality').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await editMunicipality();
+        });
+
+        document.getElementById('delete-municipality').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await deleteMunicipality();
         });
 
     }
@@ -95,6 +112,73 @@ function renderMunicipalitiesPage() {
         `;
         tbody.appendChild(tr);
     }
+}
+
+
+async function addMunicipality() {
+
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        region_id: document.getElementById('region_id').value.trim(),
+        municipality_center_id: document.getElementById('municipality_center_id').value.trim()
+    };
+
+    if (!params.id || !params.name_en || !params.name_bg || !params.region_id || !params.municipality_center_id) {
+        alert('Моля, попълнете всички полета преди да добавите нова община.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
+}
+
+
+async function editMunicipality() {
+
+    const params = {
+        id: document.getElementById('id').value.trim(),
+        name_en: document.getElementById('name_en').value.trim(),
+        name_bg: document.getElementById('name_bg').value.trim(),
+        region_id: document.getElementById('region_id').value.trim(),
+        municipality_center_id: document.getElementById('municipality_center_id').value.trim()
+    };
+
+    if (!params.id) {
+        alert('Моля, попълнете ID на общината, която искате да редактирате.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
+}
+
+
+async function deleteMunicipality() {
+
+    const id = document.getElementById('id').value.trim();
+
+    if (!id) {
+        alert('Моля, попълнете ID на общината, която искате да изтриете.');
+        return;
+    }
+
+    try {
+        //finish
+    } catch (err) {
+        handleError(err);
+    }
+
+
 }
 
 export default initMunicipalities;
