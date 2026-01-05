@@ -1,6 +1,8 @@
 import http from 'http';
 import url from 'url';
-import { getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria } from './helpers/serverFunctions.js';
+import { getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria,
+    getMunicipalitiesByCriteria, getTownhallsByCriteria, getSettlementsByCriteria
+ } from './helpers/serverFunctions.js';
 import path from 'path';
 
 const server = http.createServer();
@@ -39,6 +41,7 @@ server.on('request', async (req, res) => {
         }
 
     } else if (pathName === '/tables') {
+
         try {
             const data = await getTablesRowCounts();
             res.setHeader('Content-Type', 'application/json');
@@ -47,6 +50,7 @@ server.on('request', async (req, res) => {
             console.error(err);
             return res.statusCode = 500, res.end();
         }
+
     } else if (pathName === '/regions') {
 
         const params = {
@@ -64,7 +68,65 @@ server.on('request', async (req, res) => {
             console.error(err);
             return res.statusCode = 500, res.end();
         }
-    } else {
+
+    } else if (pathName === '/municipalities') {
+
+        const params = {
+            id: parsedURL.query.id || '',
+            name: parsedURL.query.name || '',
+            region_id: parsedURL.query.region_id || '',
+            municipality_center_id: parsedURL.query.municipality_center_id || ''
+        };
+
+        try {
+            const data = await getMunicipalitiesByCriteria(params);
+            res.setHeader('Content-Type', 'application/json');
+            console.log('API return: ', parsedURL.path);
+            return res.end(JSON.stringify(data));
+        } catch (err) {
+            console.error(err);
+            return res.statusCode = 500, res.end();
+        }
+
+    } else if (pathName === '/townhalls') {
+
+        const params = {
+            id: parsedURL.query.id || '',
+            name: parsedURL.query.name || '',
+            municipality_id: parsedURL.query.municipality_id || ''
+        };
+
+        try {
+            const data = await getTownhallsByCriteria(params);
+            res.setHeader('Content-Type', 'application/json');
+            console.log('API return: ', parsedURL.path);
+            return res.end(JSON.stringify(data));
+        } catch (err) {
+            console.error(err);
+            return res.statusCode = 500, res.end();
+        }
+
+    } else if (pathName === '/settlements') {
+        const params = {
+            id: parsedURL.query.id || '',
+            name: parsedURL.query.name || '',
+            type: parsedURL.query.type || '',
+            municipality_id: parsedURL.query.municipality_id || '',
+            region_id: parsedURL.query.region_id || ''
+        };
+
+        try {
+            const data = await getSettlementsByCriteria(params);
+            res.setHeader('Content-Type', 'application/json');
+            console.log('API return: ', parsedURL.path);
+            return res.end(JSON.stringify(data));
+        } catch (err) {
+            console.error(err);
+            return res.statusCode = 500, res.end();
+        }
+
+    }
+    else {
         return res.statusCode = 404, res.end();
     }
 

@@ -53,11 +53,12 @@ export const getTablesRowCounts = async () => {
 };
 
 export const getRegionsByCriteria = async (params) => {
+
     const sql = `SELECT id, name_bg, name_en, region_center_id
         FROM regions
         WHERE ($1 = '' OR name_bg ~* $1 OR name_en ~* $1)
-            AND ($2 = '' OR id::text = $2)
-            AND ($3 = '' OR region_center_id::text = $3)`;
+            AND ($2 = '' OR id ~* $2)
+            AND ($3 = '' OR region_center_id ~* $3)`;
 
     const values = [
         params.name || '',
@@ -73,4 +74,69 @@ export const getRegionsByCriteria = async (params) => {
         console.error(err);
         throw new Error('DB query failed');
     }
+
+}
+
+
+export const getMunicipalitiesByCriteria = async (params) => {
+
+    const sql = `SELECT id, name_bg, name_en, region_id, municipality_center_id
+        FROM municipalities WHERE ($1 = '' OR name_bg ~* $1 OR name_en ~* $1)
+            AND ($2 = '' OR id ~* $2)
+            AND ($3 = '' OR region_id ~* $3)
+            AND ($4 = '' OR municipality_center_id ~* $4)`;
+
+    const values = [params.name || '', params.id || '', params.region_id || '', params.municipality_center_id || ''];
+
+    try {
+        const res = await query(sql, values);
+        const formattedRes = { rowCount: res.rowCount, rows: res.rows };
+        return formattedRes;
+    } catch (err) {
+        console.error(err);
+        throw new Error('DB query failed');
+    }
+
+}
+
+export const getTownhallsByCriteria = async (params) => {
+
+    const sql = `SELECT id, name_bg, name_en, municipality_id
+        FROM townhalls WHERE ($1 = '' OR name_bg ~* $1 OR name_en ~* $1)
+            AND ($2 = '' OR id ~* $2)
+            AND ($3 = '' OR municipality_id ~* $3)`;
+
+    const values = [params.name || '', params.id || '', params.municipality_id || ''];
+
+    try {
+        const res = await query(sql, values);
+        const formattedRes = { rowCount: res.rowCount, rows: res.rows };
+        return formattedRes;
+    } catch (err) {
+        console.error(err);
+        throw new Error('DB query failed');
+    }
+
+}
+
+export const getSettlementsByCriteria = async (params) => {
+
+    const sql = `SELECT id, type, name_bg, name_en, townhall_id, municipality_id
+        FROM towns WHERE ($1 = '' OR name_bg ~* $1 OR name_en ~* $1)
+            AND ($2 = '' OR id ~* $2)
+            AND ($3 = '' OR type ~* $3)
+            AND ($4 = '' OR townhall_id ~* $4)
+            AND ($5 = '' OR municipality_id ~* $5)`;
+
+    const values = [params.name || '', params.id || '', params.type || '', params.townhall_id || '', params.municipality_id || ''];
+
+    try {
+        const res = await query(sql, values);
+        const formattedRes = { rowCount: res.rowCount, rows: res.rows };
+        return formattedRes;
+    } catch (err) {
+        console.error(err);
+        throw new Error('DB query failed');
+    }
+
 }

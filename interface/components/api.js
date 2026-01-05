@@ -27,6 +27,7 @@ export async function fetchStats() {
     return await (await fetch(HOST + '/tables')).json();
 }
 
+
 export async function fetchRegions(params = {}) {
     const apiUrl = new URL(HOST + '/regions');
 
@@ -35,6 +36,47 @@ export async function fetchRegions(params = {}) {
             apiUrl.searchParams.append(key, params[key]);
         }
     }
+
+    const data = await (await fetch(apiUrl)).json();
+    return data;
+}
+
+
+export async function fetchMunicipalities(params = {}) {
+    const apiUrl = new URL(HOST + '/municipalities');
+
+    for (const key in params) {
+        if (params[key]) {
+            apiUrl.searchParams.append(key, params[key]);
+        }
+    }
+
+    const data = await (await fetch(apiUrl)).json();
+    return data;
+}
+
+export async function fetchTownhalls(params = {}) {
+    const apiUrl = new URL(HOST + '/townhalls');
+
+    for (const key in params) {
+        if (params[key]) {
+            apiUrl.searchParams.append(key, params[key]);
+        }
+    }
+
+    const data = await (await fetch(apiUrl)).json();
+    return data;
+}
+
+export async function fetchSettlements(params = {}) {
+
+    const apiUrl = new URL(HOST + '/settlements');
+    for (const key in params) {
+        if (params[key]) {
+            apiUrl.searchParams.append(key, params[key]);
+        }
+    }
+    
     const data = await (await fetch(apiUrl)).json();
     return data;
 }
