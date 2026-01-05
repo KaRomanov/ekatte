@@ -12,16 +12,24 @@ const PORT = 3000;
 server.on('request', async (req, res) => {
 
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
 
     const parsedURL = url.parse(req.url, true);
-    const pathName = parsedURL.pathname;
+    const pathParts = parsedURL.pathname.split('/').filter(Boolean);
+    const pathName = pathParts[0];
+
+    if (req.method === 'OPTIONS') {
+        res.statusCode = 204;
+        res.end();
+        return;
+    }
 
     if (req.method == 'GET') {
+        //read data
 
-        if (pathName === '/towns') {
+        if (pathName === 'towns') {
 
             const params = {
                 town: parsedURL.query.town || '',
@@ -33,25 +41,26 @@ server.on('request', async (req, res) => {
             try {
                 const data = await getTownsByCriteria(params);
                 res.setHeader('Content-Type', 'application/json');
-                console.log('API return: ', parsedURL.path);
+                console.log('API return: ', req.method, parsedURL.path);
                 return res.end(JSON.stringify(data));
             } catch (err) {
                 console.error(err);
                 return res.statusCode = 500, res.end();
             }
 
-        } else if (pathName === '/tables') {
+        } else if (pathName === 'tables') {
 
             try {
                 const data = await getTablesRowCounts();
                 res.setHeader('Content-Type', 'application/json');
+                console.log('API return: ', req.method, parsedURL.path);
                 return res.end(JSON.stringify(data));
             } catch (err) {
                 console.error(err);
                 return res.statusCode = 500, res.end();
             }
 
-        } else if (pathName === '/regions') {
+        } else if (pathName === 'regions') {
 
             const params = {
                 id: parsedURL.query.id || '',
@@ -63,14 +72,14 @@ server.on('request', async (req, res) => {
             try {
                 const data = await getRegionsByCriteria(params);
                 res.setHeader('Content-Type', 'application/json');
-                console.log('API return: ', parsedURL.path);
+                console.log('API return: ', req.method, parsedURL.path);
                 return res.end(JSON.stringify(data));
             } catch (err) {
                 console.error(err);
                 return res.statusCode = 500, res.end();
             }
 
-        } else if (pathName === '/municipalities') {
+        } else if (pathName === 'municipalities') {
 
             const params = {
                 id: parsedURL.query.id || '',
@@ -83,14 +92,14 @@ server.on('request', async (req, res) => {
             try {
                 const data = await getMunicipalitiesByCriteria(params);
                 res.setHeader('Content-Type', 'application/json');
-                console.log('API return: ', parsedURL.path);
+                console.log('API return: ', req.method, parsedURL.path);
                 return res.end(JSON.stringify(data));
             } catch (err) {
                 console.error(err);
                 return res.statusCode = 500, res.end();
             }
 
-        } else if (pathName === '/townhalls') {
+        } else if (pathName === 'townhalls') {
 
             const params = {
                 id: parsedURL.query.id || '',
@@ -102,14 +111,14 @@ server.on('request', async (req, res) => {
             try {
                 const data = await getTownhallsByCriteria(params);
                 res.setHeader('Content-Type', 'application/json');
-                console.log('API return: ', parsedURL.path);
+                console.log('API return: ', req.method, parsedURL.path);
                 return res.end(JSON.stringify(data));
             } catch (err) {
                 console.error(err);
                 return res.statusCode = 500, res.end();
             }
 
-        } else if (pathName === '/settlements') {
+        } else if (pathName === 'settlements') {
             const params = {
                 id: parsedURL.query.id || '',
                 name_bg: parsedURL.query.name_bg || '',
@@ -122,7 +131,7 @@ server.on('request', async (req, res) => {
             try {
                 const data = await getSettlementsByCriteria(params);
                 res.setHeader('Content-Type', 'application/json');
-                console.log('API return: ', parsedURL.path);
+                console.log('API return: ', req.method, parsedURL.path);
                 return res.end(JSON.stringify(data));
             } catch (err) {
                 console.error(err);
@@ -135,15 +144,93 @@ server.on('request', async (req, res) => {
         }
 
     } else if (req.method == 'POST') {
+        // add new entries
 
-        if (pathName === '/settlements') {
+        if (pathName === 'settlements') {
             // add new settlement
-        } else if (pathName === '/townhalls') {
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'townhalls') {
             //add new townhall
-        } else if (pathName === '/municipalities') {
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'municipalities') {
             //add new municipality
-        } else if (pathName === '/regions') {
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'regions') {
             //add new region
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else {
+            return res.statusCode = 404, res.end();
+        }
+
+    } else if (req.method === 'DELETE') {
+        //delete entries
+        const id = pathParts[1];
+        console.log('Deleting ID:', id);
+        if (!id) {
+            return res.statusCode = 404, res.end();
+        }
+
+        if (pathName === 'settlements') {
+            //delete    
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'townhalls') {
+            //delete 
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'municipalities') {
+            //delete
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'regions') {
+            //delete
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else {
+            return res.statusCode = 404, res.end();
+        }
+
+    } else if (req.method === 'PUT') {
+        //update entries
+
+        const id = pathParts[1];
+
+        if (!id) {
+            return res.statusCode = 404, res.end();
+        }
+
+        if (pathName === 'settlements') {
+            //update 
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'townhalls') {
+            //update
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'municipalities') {
+            //update
+
+            console.log('API return: ', req.method, parsedURL.path);
+
+        } else if (pathName === 'regions') {
+            //update
+
+            console.log('API return: ', req.method, parsedURL.path);
+
         } else {
             return res.statusCode = 404, res.end();
         }
@@ -151,7 +238,6 @@ server.on('request', async (req, res) => {
     } else {
         return res.statusCode = 405, res.end();
     }
-
 
 });
 
