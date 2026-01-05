@@ -8,20 +8,19 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchRegions, fetchStats } from "../../components/api.js";
+import { fetchSettlements, fetchStats } from "../../components/api.js";
 
 
-async function initRegions() {
+async function initSettlements() {
     try {
         clearFields();
-        const data = await fetchRegions();
+        const data = await fetchSettlements();
         const stats = await fetchStats();
-
         statePopulate(data);
-        renderRegionsPage();
-        setupPagination(renderRegionsPage);
+        renderSettlementsPage();
+        setupPagination(renderSettlementsPage);
 
-        document.getElementById('total-rows-count').textContent = stats.regions;
+        document.getElementById('total-rows-count').textContent = stats.towns;
         updateRowCount(data.rowCount);
     } catch (err) {
         handleError(err);
@@ -29,33 +28,30 @@ async function initRegions() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    initRegions();
+    initSettlements();
 
     const form = document.getElementById('search-form');
-
     if (form) {
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
-
             const params = {
                 id: document.getElementById('id').value.trim(),
+                type: document.getElementById('type').value.trim(),
                 name: document.getElementById('name').value.trim(),
-                region_center_id: document.getElementById('region_center_id').value.trim()
+                townhall_id: document.getElementById('townhall_id').value.trim(),
+                municipality_id: document.getElementById('municipality_id').value.trim()
             };
-
-            const data = await fetchRegions(params);
-
+            const data = await fetchSettlements(params);
             statePopulate(data);
-            renderRegionsPage();
-
-            setupPagination(renderRegionsPage);
+            renderSettlementsPage();
+            setupPagination(renderSettlementsPage);
 
             updateRowCount(data.rowCount);
         });
 
         form.addEventListener('reset', async (ev) => {
             ev.preventDefault();
-            await initRegions();
+            await initSettlements();
         });
 
     }
@@ -63,20 +59,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const firstBtn = document.getElementById('first');
     if (firstBtn) firstBtn.addEventListener('click', () => {
         setCurrentPage(1);
-        renderRegionsPage();
-        setupPagination(renderRegionsPage);
+        renderSettlementsPage();
+        setupPagination(renderSettlementsPage);
     });
 
     const lastBtn = document.getElementById('last');
     if (lastBtn) lastBtn.addEventListener('click', () => {
         const last = getPagesNum();
         setCurrentPage(last);
-        renderRegionsPage();
-        setupPagination(renderRegionsPage);
+        renderSettlementsPage();
+        setupPagination(renderSettlementsPage);
     });
+
 });
 
-function renderRegionsPage() {
+function renderSettlementsPage() {
     const tbody = document.getElementById('table-tbody');
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -89,12 +86,14 @@ function renderRegionsPage() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${row.id ?? ''}</td>
+            <td>${row.type ?? ''}</td>
             <td>${row.name_en ?? ''}</td>
             <td>${row.name_bg ?? ''}</td>
-            <td>${row.region_center_id ?? ''}</td>
+            <td>${row.townhall_id ?? null}</td>
+            <td>${row.municipality_id ?? ''}</td>
         `;
         tbody.appendChild(tr);
     }
 }
 
-export default initRegions;
+export default initSettlements;

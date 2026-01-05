@@ -101,7 +101,7 @@ export const getMunicipalitiesByCriteria = async (params) => {
 
 export const getTownhallsByCriteria = async (params) => {
 
-    const sql = `SELECT id, name_bg, name_en, municipality_id
+    const sql = `SELECT id, name_bg, name_en, municipality_id, townhall_center_id
         FROM townhalls WHERE ($1 = '' OR name_bg ~* $1 OR name_en ~* $1)
             AND ($2 = '' OR id ~* $2)
             AND ($3 = '' OR municipality_id ~* $3)`;
