@@ -8,13 +8,16 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchMunicipalities, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
+import {
+    fetchTable, fetchStats,
+    deleteEntry, addEntry, updateEntry
+} from "../../components/api.js";
 
 
 async function initMunicipalities() {
     try {
         clearFields();
-        const data = await fetchMunicipalities();
+        const data = await fetchTable('municipalities');
         const stats = await fetchStats();
 
         statePopulate(data);
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 municipality_center_id: document.getElementById('municipality_center_id').value.trim()
             };
 
-            const data = await fetchMunicipalities(params);
+            const data = await fetchTable('municipalities', params);
             statePopulate(data);
             renderMunicipalitiesPage();
 
@@ -175,8 +178,27 @@ async function editMunicipality() {
         return;
     }
 
+    const inputParams = {};
+    for (const [key, value] of Object.entries(params)) {
+        if (key === 'id') continue;
+        if (value !== '') {
+            inputParams[key] = value;
+        }
+    }
+
+    if (Object.keys(inputParams).length === 0) {
+        alert('Моля, попълнете поне едно поле за редактиране.');
+        return;
+    }
+
     try {
-        //finish
+        const res = await updateEntry('municipalities', params.id, inputParams);
+
+        if (res.success) {
+            alert(`Общината с ID ${params.id} беше редактирана успешно.`);
+            await initMunicipalities();
+        }
+
     } catch (err) {
         handleError(err);
     }
@@ -223,7 +245,4 @@ async function deleteMunicipality() {
         handleError(err);
     }
 
-
 }
-
-export default initMunicipalities;

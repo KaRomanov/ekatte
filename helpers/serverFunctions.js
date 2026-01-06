@@ -204,3 +204,35 @@ export function parseBody(req) {
         });
     });
 }
+
+export const updateEntry = async (table, id, data) => {
+    if (!['regions', 'municipalities', 'townhalls', 'towns'].includes(table)) {
+        throw new Error('Invalid table name');
+    }
+
+    const columns = Object.keys(data);
+
+    if (columns.length === 0) {
+        throw new Error('Nothing to update');
+    }
+
+    const values = Object.values(data);
+    values.push(id);
+
+    const setClause = columns.map((col, index) => `${col} = $${index + 1}`).join(', ');
+
+    const sql = `UPDATE ${table} SET ${setClause} WHERE id = $${values.length} RETURNING *`;
+
+    try {
+        const res = await query(sql, values);
+
+        if (res.rowCount === 0) {
+            return { success: false, row: null };
+        }
+
+        return { success: res.rowCount > 0, row: res.rows[0] };
+    } catch (err) {
+        throw new Error('DB query failed');
+    }
+
+}

@@ -8,13 +8,16 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchRegions, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
+import {
+    fetchTable, fetchStats,
+    deleteEntry, addEntry, updateEntry
+} from "../../components/api.js";
 
 
 async function initRegions() {
     try {
         clearFields();
-        const data = await fetchRegions();
+        const data = await fetchTable('regions');
         const stats = await fetchStats();
 
         statePopulate(data);
@@ -44,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 region_center_id: document.getElementById('region_center_id').value.trim()
             };
 
-            const data = await fetchRegions(params);
+            const data = await fetchTable('regions', params);
 
             statePopulate(data);
             renderRegionsPage();
@@ -167,8 +170,27 @@ async function editRegion() {
         return;
     }
 
+    const inputParams = {};
+    for (const [key, value] of Object.entries(params)) {
+        if (key === 'id') continue;
+        if (value !== '') {
+            inputParams[key] = value;
+        }
+    }
+
+    if (Object.keys(inputParams).length === 0) {
+        alert('Моля, попълнете поне едно поле за редактиране.');
+        return;
+    }
+
     try {
-        //finish
+        const res = await updateEntry('regions', params.id, inputParams);
+
+        if (res.success) {
+            alert(`Регионът с ID ${params.id} беше редактиран успешно.`);
+            await initRegions();
+        }
+
     } catch (err) {
         handleError(err);
     }
@@ -214,5 +236,3 @@ async function deleteRegion() {
         handleError(err);
     }
 }
-
-export default initRegions;

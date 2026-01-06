@@ -8,13 +8,13 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchTownhalls, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
+import { fetchTable, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
 
 
 async function initTownhalls() {
     try {
         clearFields();
-        const data = await fetchTownhalls();
+        const data = await fetchTable('townhalls');
         const stats = await fetchStats();
 
         statePopulate(data);
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 townhall_center_id: document.getElementById('townhall_center_id').value.trim()
             };
 
-            const data = await fetchTownhalls(params);
+            const data = await fetchTable('townhalls', params);
             statePopulate(data);
 
             renderTownhallsPage();
@@ -173,8 +173,27 @@ async function editTownhall() {
         return;
     }
 
+    const inputParams = {};
+    for (const [key, value] of Object.entries(params)) {
+        if (key === 'id') continue;
+        if (value !== '') {
+            inputParams[key] = value;
+        }
+    }
+
+    if (Object.keys(inputParams).length === 0) {
+        alert('Моля, попълнете поне едно поле за редактиране.');
+        return;
+    }
+
     try {
-        //finish
+        const res = await updateEntry('townhalls', params.id, inputParams);
+
+        if (res.success) {
+            alert(`Общината с ID ${params.id} беше редактирана успешно.`);
+            await initTownhalls();
+        }
+
     } catch (err) {
         handleError(err);
     }
@@ -220,5 +239,3 @@ async function deleteTownhall() {
     }
 
 }
-
-export default initTownhalls;

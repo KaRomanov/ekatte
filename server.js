@@ -2,7 +2,7 @@ import http from 'http';
 import url from 'url';
 import {
     getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria, deleteEntry, insertEntry,
-    getMunicipalitiesByCriteria, getTownhallsByCriteria, getSettlementsByCriteria, parseBody
+    getMunicipalitiesByCriteria, getTownhallsByCriteria, getSettlementsByCriteria, parseBody, updateEntry
 } from './helpers/serverFunctions.js';
 
 const server = http.createServer();
@@ -145,75 +145,37 @@ server.on('request', async (req, res) => {
     } else if (req.method == 'POST') {
         // add new entries
 
-        if (pathName === 'settlements') {
+        const tableMap = {
+            settlements: 'towns',
+            townhalls: 'townhalls',
+            municipalities: 'municipalities',
+            regions: 'regions'
+        };
+
+        const table = tableMap[pathName];
+
+        if (!table) {
+            return res.statusCode = 404, res.end(JSON.stringify({
+                success: false,
+                error: 'Invalid endpoint'
+            }));
+        }
+
+        try {
             const params = await parseBody(req);
 
-            try {
-                await insertEntry('towns', params);
-                console.log('API return: ', req.method, parsedURL.path);
+            //validate body?
 
-                return res.statusCode = 201, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
+            await insertEntry(table, params);
 
-        } else if (pathName === 'townhalls') {
-            const params = await parseBody(req);
+            console.log('API return: ', req.method, parsedURL.path);
+            return res.statusCode = 201, res.end(JSON.stringify({ success: true }));
 
-            try {
-                await insertEntry('townhalls', params);
-                console.log('API return: ', req.method, parsedURL.path);
-
-                return res.statusCode = 201, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
-
-        } else if (pathName === 'municipalities') {
-            const params = await parseBody(req);
-
-            try {
-                await insertEntry('municipalities', params);
-                console.log('API return: ', req.method, parsedURL.path);
-                return res.statusCode = 201, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
-
-        } else if (pathName === 'regions') {
-            const params = await parseBody(req);
-
-            try {
-                await insertEntry('regions', params);
-                console.log('API return: ', req.method, parsedURL.path);
-
-                return res.statusCode = 201, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
-
-        } else {
-            return res.statusCode = 404, res.end();
+        } catch (err) {
+            return res.statusCode = 500, res.end(JSON.stringify({
+                success: false,
+                error: err.message || 'Internal Server Error'
+            }));
         }
 
     } else if (req.method === 'DELETE') {
@@ -224,71 +186,30 @@ server.on('request', async (req, res) => {
             return res.statusCode = 404, res.end();
         }
 
-        if (pathName === 'settlements') {
+        const tableMap = {
+            settlements: 'towns',
+            townhalls: 'townhalls',
+            municipalities: 'municipalities',
+            regions: 'regions'
+        };
 
-            try {
-                await deleteEntry('towns', id);
-                console.log('API return: ', req.method, parsedURL.path);
+        const table = tableMap[pathName];
 
-                return res.statusCode = 200, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
-
-        } else if (pathName === 'townhalls') {
-
-            try {
-                await deleteEntry('townhalls', id);
-                console.log('API return: ', req.method, parsedURL.path);
-
-                return res.statusCode = 200, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
-
-        } else if (pathName === 'municipalities') {
-
-            try {
-                await deleteEntry('municipalities', id);
-                console.log('API return: ', req.method, parsedURL.path);
-                return res.statusCode = 200, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
-
-        } else if (pathName === 'regions') {
-
-            try {
-                await deleteEntry('regions', id);
-                console.log('API return: ', req.method, parsedURL.path);
-
-                return res.statusCode = 200, res.end(JSON.stringify({
-                    success: true
-                }));
-            } catch (err) {
-                return res.statusCode = 500, res.end(JSON.stringify({
-                    success: false,
-                    error: err.message || 'Internal Server Error'
-                }));
-            }
-
-        } else {
+        if (!table) {
             return res.statusCode = 404, res.end(JSON.stringify({
+                success: false,
+                error: 'Invalid endpoint'
+            }));
+        }
+
+        try {
+            await deleteEntry(table, id);
+
+            console.log('API return: ', req.method, parsedURL.path);
+            return res.statusCode = 200, res.end(JSON.stringify({ success: true }));
+
+        } catch (err) {
+            return res.statusCode = 500, res.end(JSON.stringify({
                 success: false,
                 error: err.message || 'Internal Server Error'
             }));
@@ -300,31 +221,49 @@ server.on('request', async (req, res) => {
         const id = pathParts[1];
 
         if (!id) {
+            return res.statusCode = 404, res.end(JSON.stringify({
+                success: false,
+                error: 'ID not provided'
+            }));
+        }
+
+        const tableMap = {
+            settlements: 'towns',
+            townhalls: 'townhalls',
+            municipalities: 'municipalities',
+            regions: 'regions'
+        };
+
+        const table = tableMap[pathName];
+
+        if (!table) {
             return res.statusCode = 404, res.end();
         }
 
-        if (pathName === 'settlements') {
-            //update 
+        try {
+            const params = await parseBody(req);
+
+            const updateData = Object.fromEntries(
+                Object.entries(params).filter(([key, val]) => key !== 'id' && val !== '')
+            );
+
+            if (Object.keys(updateData).length === 0) {
+                return res.statusCode = 400, res.end(JSON.stringify({
+                    success: false,
+                    error: 'No fields to update'
+                }));
+            }
+
+            await updateEntry(table, id, updateData);
 
             console.log('API return: ', req.method, parsedURL.path);
+            return res.statusCode = 200, res.end(JSON.stringify({ success: true }));
 
-        } else if (pathName === 'townhalls') {
-            //update
-
-            console.log('API return: ', req.method, parsedURL.path);
-
-        } else if (pathName === 'municipalities') {
-            //update
-
-            console.log('API return: ', req.method, parsedURL.path);
-
-        } else if (pathName === 'regions') {
-            //update
-
-            console.log('API return: ', req.method, parsedURL.path);
-
-        } else {
-            return res.statusCode = 404, res.end();
+        } catch (err) {
+            return res.statusCode = 500, res.end(JSON.stringify({
+                success: false,
+                error: err.message || 'Internal Server Error'
+            }));
         }
 
     } else {

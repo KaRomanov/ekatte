@@ -28,58 +28,17 @@ export async function fetchStats() {
 }
 
 
-export async function fetchRegions(params = {}) {
-    const apiUrl = new URL(HOST + '/regions');
-
+export async function fetchTable(endpoint, params = {}) {
+    const apiUrl = new URL(HOST + `/${endpoint}`);
     for (const key in params) {
         if (params[key]) {
             apiUrl.searchParams.append(key, params[key]);
         }
     }
-
     const data = await (await fetch(apiUrl)).json();
     return data;
 }
 
-
-export async function fetchMunicipalities(params = {}) {
-    const apiUrl = new URL(HOST + '/municipalities');
-
-    for (const key in params) {
-        if (params[key]) {
-            apiUrl.searchParams.append(key, params[key]);
-        }
-    }
-
-    const data = await (await fetch(apiUrl)).json();
-    return data;
-}
-
-export async function fetchTownhalls(params = {}) {
-    const apiUrl = new URL(HOST + '/townhalls');
-
-    for (const key in params) {
-        if (params[key]) {
-            apiUrl.searchParams.append(key, params[key]);
-        }
-    }
-
-    const data = await (await fetch(apiUrl)).json();
-    return data;
-}
-
-export async function fetchSettlements(params = {}) {
-
-    const apiUrl = new URL(HOST + '/settlements');
-    for (const key in params) {
-        if (params[key]) {
-            apiUrl.searchParams.append(key, params[key]);
-        }
-    }
-
-    const data = await (await fetch(apiUrl)).json();
-    return data;
-}
 
 export async function deleteEntry(endpoint, id) {
 
@@ -89,24 +48,16 @@ export async function deleteEntry(endpoint, id) {
         method: 'DELETE'
     });
 
-    let data;
-    try {
-        data = await response.json();
-    } catch {
-        data = await response.text();
-    }
+    const data = await response.json();
 
     if (!response.ok) {
-        const errorMessage =
-            typeof data === 'string'
-                ? data
-                : data?.error || 'Request failed';
-
+        const errorMessage = data?.error || 'Request failed';
         throw new Error(errorMessage);
     }
 
     return data;
 }
+
 
 export async function addEntry(endpoint, params) {
     const apiUrl = new URL(HOST + `/${endpoint}`);
@@ -117,18 +68,31 @@ export async function addEntry(endpoint, params) {
         body: JSON.stringify(params)
     });
 
-    let data;
-    try {
-        data = await response.json();
-    } catch {
-        data = await response.text();
-    }
+    const data = await response.json();
 
     if (!response.ok) {
-        const errorMessage =
-            typeof data === 'string'
-                ? data
-                : data?.error || 'Request failed';
+        const errorMessage = data?.error || 'Request failed';
+        throw new Error(errorMessage);
+    }
+
+    return data;
+}
+
+
+export async function updateEntry(endpoint, id, params) {
+
+    const apiUrl = new URL(HOST + `/${endpoint}/${id}`);
+
+    const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        const errorMessage = data?.error || 'Request failed';
         throw new Error(errorMessage);
     }
 
