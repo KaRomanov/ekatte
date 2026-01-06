@@ -155,7 +155,7 @@ server.on('request', async (req, res) => {
         const table = tableMap[pathName];
 
         if (!table) {
-            return res.statusCode = 404, res.end(JSON.stringify({
+            return res.statusCode = 404, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({
                 success: false,
                 error: 'Invalid endpoint'
             }));
@@ -169,10 +169,10 @@ server.on('request', async (req, res) => {
             await insertEntry(table, params);
 
             console.log('API return: ', req.method, parsedURL.path);
-            return res.statusCode = 201, res.end(JSON.stringify({ success: true }));
+            return res.statusCode = 201, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({ success: true }));
 
         } catch (err) {
-            return res.statusCode = 500, res.end(JSON.stringify({
+            return res.statusCode = 500, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({
                 success: false,
                 error: err.message || 'Internal Server Error'
             }));
@@ -196,7 +196,7 @@ server.on('request', async (req, res) => {
         const table = tableMap[pathName];
 
         if (!table) {
-            return res.statusCode = 404, res.end(JSON.stringify({
+            return res.statusCode = 404, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({
                 success: false,
                 error: 'Invalid endpoint'
             }));
@@ -206,10 +206,10 @@ server.on('request', async (req, res) => {
             await deleteEntry(table, id);
 
             console.log('API return: ', req.method, parsedURL.path);
-            return res.statusCode = 200, res.end(JSON.stringify({ success: true }));
+            return res.statusCode = 200, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({ success: true }));
 
         } catch (err) {
-            return res.statusCode = 500, res.end(JSON.stringify({
+            return res.statusCode = 500, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({
                 success: false,
                 error: err.message || 'Internal Server Error'
             }));
@@ -221,7 +221,7 @@ server.on('request', async (req, res) => {
         const id = pathParts[1];
 
         if (!id) {
-            return res.statusCode = 404, res.end(JSON.stringify({
+            return res.statusCode = 404, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({
                 success: false,
                 error: 'ID not provided'
             }));
@@ -248,7 +248,7 @@ server.on('request', async (req, res) => {
             );
 
             if (Object.keys(updateData).length === 0) {
-                return res.statusCode = 400, res.end(JSON.stringify({
+                return res.statusCode = 400, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({
                     success: false,
                     error: 'No fields to update'
                 }));
@@ -257,10 +257,10 @@ server.on('request', async (req, res) => {
             await updateEntry(table, id, updateData);
 
             console.log('API return: ', req.method, parsedURL.path);
-            return res.statusCode = 200, res.end(JSON.stringify({ success: true }));
+            return res.statusCode = 200, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({ success: true }));
 
         } catch (err) {
-            return res.statusCode = 500, res.end(JSON.stringify({
+            return res.statusCode = 500, res.setHeader('Content-Type', 'application/json'), res.end(JSON.stringify({
                 success: false,
                 error: err.message || 'Internal Server Error'
             }));

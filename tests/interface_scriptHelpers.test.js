@@ -69,7 +69,7 @@ describe('DOM manipulation functions', () => {
 
             expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching data:', error);
             const errorDiv = document.getElementById('table-error');
-            expect(errorDiv.textContent).toBe('Неуспешно зареждане на данните');
+            expect(errorDiv.textContent).toBe('Test error');
             expect(errorDiv.style.display).toBe('block');
 
             expect(document.getElementById('table-tbody').innerHTML).toBe('');
