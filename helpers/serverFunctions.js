@@ -23,7 +23,6 @@ export const getTownsByCriteria = async (params) => {
         const formattedRes = { rowCount: res.rowCount, rows: res.rows };
         return formattedRes;
     } catch (err) {
-        console.error(err);
         throw new Error('DB query failed');
     }
 }
@@ -73,7 +72,6 @@ export const getRegionsByCriteria = async (params) => {
         const formattedRes = { rowCount: res.rowCount, rows: res.rows };
         return formattedRes;
     } catch (err) {
-        console.error(err);
         throw new Error('DB query failed');
     }
 
@@ -100,7 +98,6 @@ export const getMunicipalitiesByCriteria = async (params) => {
         const formattedRes = { rowCount: res.rowCount, rows: res.rows };
         return formattedRes;
     } catch (err) {
-        console.error(err);
         throw new Error('DB query failed');
     }
 
@@ -124,7 +121,6 @@ export const getTownhallsByCriteria = async (params) => {
         const formattedRes = { rowCount: res.rowCount, rows: res.rows };
         return formattedRes;
     } catch (err) {
-        console.error(err);
         throw new Error('DB query failed');
     }
 
@@ -152,7 +148,6 @@ export const getSettlementsByCriteria = async (params) => {
         const formattedRes = { rowCount: res.rowCount, rows: res.rows };
         return formattedRes;
     } catch (err) {
-        console.error(err);
         throw new Error('DB query failed');
     }
 
@@ -171,7 +166,41 @@ export const deleteEntry = async (table, id) => {
         const res = await query(sql, values);
         return { success: res.rowCount > 0 };
     } catch (err) {
-        console.error(err);
         throw new Error('DB query failed');
     }
+}
+
+export const insertEntry = async (table, data) => {
+
+    if (!['regions', 'municipalities', 'townhalls', 'towns'].includes(table)) {
+        throw new Error('Invalid table name');
+    }
+
+    const columns = Object.keys(data);
+    const values = Object.values(data);
+    const placeholders = columns.map((_, index) => `$${index + 1}`);
+
+    const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders.join(', ')}) RETURNING *`;
+
+    try {
+        const res = await query(sql, values);
+        return { success: true, row: res.rows[0] };
+    } catch (err) {
+        throw new Error('DB query failed');
+    }
+
+}
+
+export function parseBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', () => {
+            try {
+                resolve(JSON.parse(body));
+            } catch {
+                reject(new Error('Invalid JSON'));
+            }
+        });
+    });
 }

@@ -1,8 +1,8 @@
 import http from 'http';
 import url from 'url';
 import {
-    getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria, deleteEntry,
-    getMunicipalitiesByCriteria, getTownhallsByCriteria, getSettlementsByCriteria
+    getTownsByCriteria, getTablesRowCounts, getRegionsByCriteria, deleteEntry, insertEntry,
+    getMunicipalitiesByCriteria, getTownhallsByCriteria, getSettlementsByCriteria, parseBody
 } from './helpers/serverFunctions.js';
 
 const server = http.createServer();
@@ -146,24 +146,71 @@ server.on('request', async (req, res) => {
         // add new entries
 
         if (pathName === 'settlements') {
-            // add new settlement
+            const params = await parseBody(req);
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await insertEntry('towns', params);
+                console.log('API return: ', req.method, parsedURL.path);
+
+                return res.statusCode = 201, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
 
         } else if (pathName === 'townhalls') {
-            //add new townhall
+            const params = await parseBody(req);
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await insertEntry('townhalls', params);
+                console.log('API return: ', req.method, parsedURL.path);
+
+                return res.statusCode = 201, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
 
         } else if (pathName === 'municipalities') {
-            //add new municipality
+            const params = await parseBody(req);
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await insertEntry('municipalities', params);
+                console.log('API return: ', req.method, parsedURL.path);
+                return res.statusCode = 201, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
 
         } else if (pathName === 'regions') {
-            //add new region
+            const params = await parseBody(req);
 
-            console.log('API return: ', req.method, parsedURL.path);
+            try {
+                await insertEntry('regions', params);
+                console.log('API return: ', req.method, parsedURL.path);
+
+                return res.statusCode = 201, res.end(JSON.stringify({
+                    success: true
+                }));
+            } catch (err) {
+                return res.statusCode = 500, res.end(JSON.stringify({
+                    success: false,
+                    error: err.message || 'Internal Server Error'
+                }));
+            }
 
         } else {
             return res.statusCode = 404, res.end();
@@ -193,8 +240,6 @@ server.on('request', async (req, res) => {
                 }));
             }
 
-
-
         } else if (pathName === 'townhalls') {
 
             try {
@@ -210,8 +255,6 @@ server.on('request', async (req, res) => {
                     error: err.message || 'Internal Server Error'
                 }));
             }
-
-
 
         } else if (pathName === 'municipalities') {
 
@@ -243,8 +286,6 @@ server.on('request', async (req, res) => {
                     error: err.message || 'Internal Server Error'
                 }));
             }
-
-
 
         } else {
             return res.statusCode = 404, res.end(JSON.stringify({

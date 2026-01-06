@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchSettlements, fetchStats, deleteEntry } from "../../components/api.js";
+import { fetchSettlements, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
 
 
 async function initSettlements() {
@@ -125,7 +125,7 @@ async function addSettlement() {
         type: document.getElementById('type').value.trim(),
         name_en: document.getElementById('name_en').value.trim(),
         name_bg: document.getElementById('name_bg').value.trim(),
-        townhall_id: document.getElementById('townhall_id').value.trim(),
+        townhall_id: document.getElementById('townhall_id').value.trim() || null,
         municipality_id: document.getElementById('municipality_id').value.trim()
     };
 
@@ -139,10 +139,29 @@ async function addSettlement() {
         return;
     }
 
+    if (params.municipality_id.length !== 5) {
+        alert('ID-то на общината трябва да е точно 5 символа!');
+        return;
+    }
+
+    if (params.type !== 'гр.' && params.type !== 'с.' && params.type !== 'ман.') {
+        alert('Типът на населеното място трябва да бъде един от следните: гр., с., ман.!');
+        return;
+    }
+
+    if (params.townhall_id && params.townhall_id.length !== 8) {
+        alert('ID-то на кметството трябва да е точно 8 символа!');
+        return;
+    }
 
     try {
-        //finish
-        throw new Error('Not implemented yet');
+        const res = await addEntry('settlements', params);
+
+        if (res.success) {
+            alert(`Населеното място беше добавено успешно с ID ${params.id}.`);
+            await initSettlements();
+        }
+
     } catch (err) {
         handleError(err);
     }

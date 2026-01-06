@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchTownhalls, fetchStats, deleteEntry } from "../../components/api.js";
+import { fetchTownhalls, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
 
 
 async function initTownhalls() {
@@ -124,13 +124,34 @@ async function addTownhall() {
         townhall_center_id: document.getElementById('townhall_center_id').value.trim()
     };
 
-    if (!params.id || !params.name_en || !params.name_bg || !params.municipality_id || !params.townhall_center_id) {
+    if (!params.id || !params.name_en || !params.name_bg || !params.municipality_id) {
         alert('Моля, попълнете всички полета, за да добавите нова община.');
         return;
     }
 
+    if (params.id.length !== 8) {
+        alert('ID-то на кметството трябва да е точно 8 символа!');
+        return;
+    }
+
+    if (params.municipality_id.length !== 5) {
+        alert('ID-то на общината трябва да е точно 5 символа!');
+        return;
+    }
+
+    if (params.townhall_center_id && params.townhall_center_id.length !== 5) {
+        alert('ID-то на центъра на кметството трябва да е точно 5 символа!');
+        return;
+    }
+
     try {
-        //finish
+        const res = await addEntry('townhalls', params);
+
+        if (res.success) {
+            alert(`Общината беше добавена успешно с ID ${res.id}.`);
+            await initTownhalls();
+        }
+
     } catch (err) {
         handleError(err);
     }

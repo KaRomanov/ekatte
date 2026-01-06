@@ -107,3 +107,30 @@ export async function deleteEntry(endpoint, id) {
 
     return data;
 }
+
+export async function addEntry(endpoint, params) {
+    const apiUrl = new URL(HOST + `/${endpoint}`);
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(params)
+    });
+
+    let data;
+    try {
+        data = await response.json();
+    } catch {
+        data = await response.text();
+    }
+
+    if (!response.ok) {
+        const errorMessage =
+            typeof data === 'string'
+                ? data
+                : data?.error || 'Request failed';
+        throw new Error(errorMessage);
+    }
+
+    return data;
+}

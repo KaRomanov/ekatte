@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchMunicipalities, fetchStats, deleteEntry } from "../../components/api.js";
+import { fetchMunicipalities, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
 
 
 async function initMunicipalities() {
@@ -122,16 +122,37 @@ async function addMunicipality() {
         name_en: document.getElementById('name_en').value.trim(),
         name_bg: document.getElementById('name_bg').value.trim(),
         region_id: document.getElementById('region_id').value.trim(),
-        municipality_center_id: document.getElementById('municipality_center_id').value.trim()
+        municipality_center_id: document.getElementById('municipality_center_id').value.trim() || null
     };
 
-    if (!params.id || !params.name_en || !params.name_bg || !params.region_id || !params.municipality_center_id) {
+    if (!params.id || !params.name_en || !params.name_bg || !params.region_id) {
         alert('Моля, попълнете всички полета преди да добавите нова община.');
         return;
     }
 
+    if (params.id.length !== 5) {
+        alert('ID-то на общината трябва да е точно 5 символа!');
+        return;
+    }
+
+    if (params.region_id.length !== 3) {
+        alert('ID-то на региона трябва да е точно 3 символа!');
+        return;
+    }
+
+    if (params.municipality_center_id && params.municipality_center_id.length !== 5) {
+        alert('ID-то на центъра на общината трябва да е точно 5 символа!');
+        return;
+    }
+
     try {
-        //finish
+        const res = await addEntry('municipalities', params);
+
+        if (res.success) {
+            alert(`Общината с ID ${params.id} беше добавена успешно.`);
+            await initMunicipalities();
+        }
+
     } catch (err) {
         handleError(err);
     }

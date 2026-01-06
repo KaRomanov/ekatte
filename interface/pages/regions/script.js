@@ -8,7 +8,7 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import { fetchRegions, fetchStats, deleteEntry } from "../../components/api.js";
+import { fetchRegions, fetchStats, deleteEntry, addEntry } from "../../components/api.js";
 
 
 async function initRegions() {
@@ -120,16 +120,32 @@ async function addRegion() {
         id: document.getElementById('id').value.trim(),
         name_en: document.getElementById('name_en').value.trim(),
         name_bg: document.getElementById('name_bg').value.trim(),
-        region_center_id: document.getElementById('region_center_id').value.trim()
+        region_center_id: document.getElementById('region_center_id').value.trim() || null
     };
 
-    if (!params.id || !params.name_en || !params.name_bg || !params.region_center_id) {
+    if (!params.id || !params.name_en || !params.name_bg) {
         alert('Моля, попълнете всички полета преди да добавите нов регион.');
         return;
     }
 
+    if (params.id.length !== 3) {
+        alert('ID-то на региона трябва да е точно 3 символа!');
+        return;
+    }
+
+    if (params.region_center_id && params.region_center_id.length !== 5) {
+        alert('ID-то на регионалния център трябва да е точно 5 символа!');
+        return;
+    }
+
     try {
-        //finish
+        const res = await addEntry('regions', params);
+
+        if (res.success) {
+            alert(`Регионът с ID ${params.id} беше добавен успешно.`);
+            await initRegions();
+        }
+
     } catch (err) {
         handleError(err);
     }
