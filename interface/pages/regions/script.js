@@ -173,6 +173,20 @@ async function deleteRegion() {
         return;
     }
 
+    const confirmed = confirm(
+        `ВНИМАНИЕ!\n\n` +
+        `Изтриването на регион с ID ${id} ще доведе до:\n` +
+        `• изтриване на всички общини в региона\n` +
+        `• изтриване на всички кметства\n` +
+        `• изтриване на всички населени места\n\n` +
+        `Това действие е НЕОБРАТИМО!\n\n` +
+        `Сигурни ли сте, че искате да продължите?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
     try {
         const res = await deleteEntry('regions', id);
 

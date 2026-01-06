@@ -2,15 +2,15 @@ CREATE TABLE regions (
   id CHAR(3) PRIMARY KEY,
   name_en VARCHAR UNIQUE NOT NULL,
   name_bg VARCHAR UNIQUE NOT NULL,
-  region_center_id CHAR(5) NOT NULL
+  region_center_id CHAR(5)
 );
 
 CREATE TABLE municipalities (
   id CHAR(5) PRIMARY KEY,
   name_en VARCHAR NOT NULL,
   name_bg VARCHAR NOT NULL,
-  region_id CHAR(3) NOT NULL,
-  municipality_center_id CHAR(5) NOT NULL
+  region_id CHAR(3),
+  municipality_center_id CHAR(5)
 );
 
 CREATE TABLE townhalls (
@@ -18,7 +18,7 @@ CREATE TABLE townhalls (
   name_en VARCHAR NOT NULL,
   name_bg VARCHAR NOT NULL,
   municipality_id CHAR(5) NOT NULL,
-  townhall_center_id CHAR(5) NOT NULL
+  townhall_center_id CHAR(5)
 );
 
 CREATE TABLE towns (
@@ -35,6 +35,7 @@ ALTER TABLE regions
   ADD CONSTRAINT fk_regions_center
   FOREIGN KEY (region_center_id)
   REFERENCES towns(id)
+  ON DELETE SET NULL
   DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE municipalities
@@ -48,6 +49,7 @@ ALTER TABLE municipalities
   ADD CONSTRAINT fk_municipalities_center
   FOREIGN KEY (municipality_center_id)
   REFERENCES towns(id)
+  ON DELETE SET NULL
   DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE townhalls
@@ -61,6 +63,7 @@ ALTER TABLE townhalls
   ADD CONSTRAINT fk_townhalls_center
   FOREIGN KEY (townhall_center_id)
   REFERENCES towns(id)
+  ON DELETE SET NULL
   DEFERRABLE INITIALLY DEFERRED;
 
 ALTER TABLE towns

@@ -175,6 +175,18 @@ async function deleteTownhall() {
         return;
     }
 
+    const confirmed = confirm(
+        `ВНИМАНИЕ!\n\n` +
+        `Изтриването на кметство с ID ${id} ще доведе до:\n` +
+        `• изтриване на всички населени места\n\n` +
+        `Това действие е НЕОБРАТИМО!\n\n` +
+        `Сигурни ли сте, че искате да продължите?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
     try {
         const res = await deleteEntry('townhalls', id);
 
