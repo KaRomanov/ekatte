@@ -15,7 +15,8 @@
       "**/*.js",
       "!node_modules/**",
       "!tests/**",
-      "!coverage/**"
+      "!coverage/**",
+      "!**/script.js"
     ],
     "coverageDirectory": "coverage",
     "coveragePathIgnorePatterns": [
