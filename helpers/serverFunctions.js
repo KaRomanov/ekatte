@@ -205,7 +205,7 @@ export function parseBody(req) {
     });
 }
 
-export const updateEntry = async (table, id, data) => {
+export const updateEntry = async (table, id, data = {}) => {
     if (!['regions', 'municipalities', 'townhalls', 'towns'].includes(table)) {
         throw new Error('Invalid table name');
     }
