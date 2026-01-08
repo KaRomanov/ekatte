@@ -16,6 +16,7 @@ function updateDisplay() {
     setupPagination(renderTownhallsPage);
 }
 
+
 export async function setupPage() {
     await initTownhalls();
 
@@ -61,6 +62,7 @@ export async function setupPage() {
     });
 }
 
+
 export async function initTownhalls() {
     try {
         clearFields();
@@ -77,6 +79,7 @@ export async function initTownhalls() {
         handleError(err);
     }
 }
+
 
 export function renderTownhallsPage() {
     const tbody = document.getElementById('table-tbody');

@@ -8,36 +8,33 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import {
-    fetchTable, fetchStats,
-} from "../../components/api.js";
+import { fetchTable, fetchStats } from "../../components/api.js";
 import { addSettlement, deleteSettlement, editSettlement } from "./crud.js";
 
 
+function refreshUI() {
+    renderSettlementsPage();
+    setupPagination(renderSettlementsPage);
+}
+
 export async function setupPage() {
-    initSettlements();
+    await initSettlements();
 
     const form = document.getElementById('search-form');
-
     if (form) {
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
 
-            const params = {
-                id: document.getElementById('id').value.trim(),
-                type: document.getElementById('type').value.trim(),
-                name_en: document.getElementById('name_en').value.trim(),
-                name_bg: document.getElementById('name_bg').value.trim(),
-                townhall_id: document.getElementById('townhall_id').value.trim(),
-                municipality_id: document.getElementById('municipality_id').value.trim()
-            };
+            const formData = new FormData(form);
+            const params = Object.fromEntries(formData.entries());
+
+            Object.keys(params).forEach(key => params[key] = params[key].trim());
 
             const data = await fetchTable('settlements', params);
             statePopulate(data);
-            renderSettlementsPage();
-            setupPagination(renderSettlementsPage);
-
             updateRowCount(data.rowCount);
+            setCurrentPage(1);
+            refreshUI();
         });
 
         form.addEventListener('reset', async (ev) => {
@@ -45,50 +42,45 @@ export async function setupPage() {
             await initSettlements();
         });
 
-        document.getElementById('new-settlement').addEventListener('click', async (e) => {
+        document.getElementById('new-settlement')?.addEventListener('click', async (e) => {
             e.preventDefault();
             await addSettlement();
         });
 
-        document.getElementById('edit-settlement').addEventListener('click', async (e) => {
+        document.getElementById('edit-settlement')?.addEventListener('click', async (e) => {
             e.preventDefault();
             await editSettlement();
         });
 
-        document.getElementById('delete-settlement').addEventListener('click', async (e) => {
+        document.getElementById('delete-settlement')?.addEventListener('click', async (e) => {
             e.preventDefault();
             await deleteSettlement();
         });
-
     }
 
-    const firstBtn = document.getElementById('first');
-    if (firstBtn) firstBtn.addEventListener('click', () => {
+    document.getElementById('first')?.addEventListener('click', () => {
         setCurrentPage(1);
-        renderSettlementsPage();
-        setupPagination(renderSettlementsPage);
+        refreshUI();
     });
 
-    const lastBtn = document.getElementById('last');
-    if (lastBtn) lastBtn.addEventListener('click', () => {
-        const last = getPagesNum();
-        setCurrentPage(last);
-        renderSettlementsPage();
-        setupPagination(renderSettlementsPage);
+    document.getElementById('last')?.addEventListener('click', () => {
+        setCurrentPage(getPagesNum());
+        refreshUI();
     });
 }
 
 export async function initSettlements() {
     try {
         clearFields();
-        const data = await fetchTable('settlements');
-        const stats = await fetchStats();
-        statePopulate(data);
-        renderSettlementsPage();
-        setupPagination(renderSettlementsPage);
+        const [data, stats] = await Promise.all([
+            fetchTable('settlements'),
+            fetchStats()
+        ]);
 
+        statePopulate(data);
         document.getElementById('total-rows-count').textContent = stats.towns;
         updateRowCount(data.rowCount);
+        refreshUI();
     } catch (err) {
         handleError(err);
     }
@@ -97,22 +89,26 @@ export async function initSettlements() {
 export function renderSettlementsPage() {
     const tbody = document.getElementById('table-tbody');
     if (!tbody) return;
-    tbody.innerHTML = '';
 
-    const rows = getRowsState();
+    const rows = getRowsState() || [];
     const start = (currentPage - 1) * rowsPerPage;
-    const pageRows = (rows || []).slice(start, start + rowsPerPage);
+    const pageRows = rows.slice(start, start + rowsPerPage);
 
-    for (const row of pageRows) {
+    const fragment = document.createDocumentFragment();
+
+    pageRows.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${row.id ?? ''}</td>
             <td>${row.type ?? ''}</td>
             <td>${row.name_en ?? ''}</td>
             <td>${row.name_bg ?? ''}</td>
-            <td>${row.townhall_id ?? null}</td>
+            <td>${row.townhall_id ?? row.municipality_id + '-00'}</td>
             <td>${row.municipality_id ?? ''}</td>
         `;
-        tbody.appendChild(tr);
-    }
+        fragment.appendChild(tr);
+    });
+
+    tbody.innerHTML = '';
+    tbody.appendChild(fragment);
 }

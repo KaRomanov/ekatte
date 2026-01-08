@@ -8,13 +8,17 @@ import {
 } from "../../components/table/table.state.js";
 import { setupPagination } from "../../components/table/table.js";
 import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
-import {
-    fetchTable, fetchStats
-} from "../../components/api.js";
+import { fetchTable, fetchStats } from "../../components/api.js";
 import { addMunicipality, deleteMunicipality, editMunicipality } from "./crud.js";
 
+
+function refreshUI() {
+    renderMunicipalitiesPage();
+    setupPagination(renderMunicipalitiesPage);
+}
+
 export async function setupPage() {
-    initMunicipalities();
+    await initMunicipalities();
 
     const form = document.getElementById('search-form');
 
@@ -22,20 +26,16 @@ export async function setupPage() {
         form.addEventListener('submit', async (ev) => {
             ev.preventDefault();
 
-            const params = {
-                id: document.getElementById('id').value.trim(),
-                name_en: document.getElementById('name_en').value.trim(),
-                name_bg: document.getElementById('name_bg').value.trim(),
-                region_id: document.getElementById('region_id').value.trim(),
-                municipality_center_id: document.getElementById('municipality_center_id').value.trim()
-            };
+            const formData = new FormData(form);
+            const params = Object.fromEntries(formData.entries());
+
+            Object.keys(params).forEach(key => params[key] = params[key].trim());
 
             const data = await fetchTable('municipalities', params);
             statePopulate(data);
-            renderMunicipalitiesPage();
-
-            setupPagination(renderMunicipalitiesPage);
             updateRowCount(data.rowCount);
+            setCurrentPage(1);
+            refreshUI();
         });
 
         form.addEventListener('reset', async (ev) => {
@@ -43,51 +43,46 @@ export async function setupPage() {
             await initMunicipalities();
         });
 
-        document.getElementById('new-municipality').addEventListener('click', async (e) => {
+        document.getElementById('new-municipality')?.addEventListener('click', async (e) => {
             e.preventDefault();
             await addMunicipality();
         });
 
-        document.getElementById('edit-municipality').addEventListener('click', async (e) => {
+        document.getElementById('edit-municipality')?.addEventListener('click', async (e) => {
             e.preventDefault();
             await editMunicipality();
         });
 
-        document.getElementById('delete-municipality').addEventListener('click', async (e) => {
+        document.getElementById('delete-municipality')?.addEventListener('click', async (e) => {
             e.preventDefault();
             await deleteMunicipality();
         });
-
     }
 
-    const firstBtn = document.getElementById('first');
-    if (firstBtn) firstBtn.addEventListener('click', () => {
+    document.getElementById('first')?.addEventListener('click', () => {
         setCurrentPage(1);
-        renderMunicipalitiesPage();
-        setupPagination(renderMunicipalitiesPage);
+        refreshUI();
     });
 
-    const lastBtn = document.getElementById('last');
-    if (lastBtn) lastBtn.addEventListener('click', () => {
+    document.getElementById('last')?.addEventListener('click', () => {
         const last = getPagesNum();
         setCurrentPage(last);
-        renderMunicipalitiesPage();
-        setupPagination(renderMunicipalitiesPage);
+        refreshUI();
     });
 }
 
 export async function initMunicipalities() {
     try {
         clearFields();
-        const data = await fetchTable('municipalities');
-        const stats = await fetchStats();
+        const [data, stats] = await Promise.all([
+            fetchTable('municipalities'),
+            fetchStats()
+        ]);
 
         statePopulate(data);
-        renderMunicipalitiesPage();
-        setupPagination(renderMunicipalitiesPage);
-
         document.getElementById('total-rows-count').textContent = stats.municipalities;
         updateRowCount(data.rowCount);
+        refreshUI();
     } catch (err) {
         handleError(err);
     }
@@ -96,13 +91,14 @@ export async function initMunicipalities() {
 export function renderMunicipalitiesPage() {
     const tbody = document.getElementById('table-tbody');
     if (!tbody) return;
-    tbody.innerHTML = '';
 
-    const rows = getRowsState();
+    const rows = getRowsState() || [];
     const start = (currentPage - 1) * rowsPerPage;
-    const pageRows = (rows || []).slice(start, start + rowsPerPage);
+    const pageRows = rows.slice(start, start + rowsPerPage);
 
-    for (const row of pageRows) {
+    const fragment = document.createDocumentFragment();
+
+    pageRows.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${row.id ?? ''}</td>
@@ -111,6 +107,9 @@ export function renderMunicipalitiesPage() {
             <td>${row.region_id ?? ''}</td>
             <td>${row.municipality_center_id ?? ''}</td>
         `;
-        tbody.appendChild(tr);
-    }
+        fragment.appendChild(tr);
+    });
+
+    tbody.innerHTML = '';
+    tbody.appendChild(fragment);
 }
