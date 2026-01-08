@@ -11,98 +11,83 @@ import { handleError, updateRowCount, clearFields } from "../../ui/dom.js";
 import { fetchTable, fetchStats } from "../../components/api.js";
 
 
+function updateDisplay() {
+    renderTownhallsPage();
+    setupPagination(renderTownhallsPage);
+}
+
 export async function setupPage() {
-    initTownhalls();
+    await initTownhalls();
 
     const form = document.getElementById('search-form');
+    if (!form) return;
 
-    if (form) {
-        form.addEventListener('submit', async (ev) => {
-            ev.preventDefault();
+    form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
 
-            const params = {
-                id: document.getElementById('id').value.trim(),
-                name_en: document.getElementById('name_en').value.trim(),
-                name_bg: document.getElementById('name_bg').value.trim(),
-                municipality_id: document.getElementById('municipality_id').value.trim(),
-                townhall_center_id: document.getElementById('townhall_center_id').value.trim()
-            };
+        const formData = new FormData(form);
+        const params = Object.fromEntries(formData.entries());
 
-            const data = await fetchTable('townhalls', params);
-            statePopulate(data);
+        Object.keys(params).forEach(key => params[key] = params[key].trim());
 
-            renderTownhallsPage();
-            setupPagination(renderTownhallsPage);
-            updateRowCount(data.rowCount);
-        });
-
-        form.addEventListener('reset', async (ev) => {
-            ev.preventDefault();
-            await initTownhalls();
-        });
-
-        document.getElementById('new-townhall').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await addTownhall();
-        });
-
-        document.getElementById('edit-townhall').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await editTownhall();
-        });
-
-        document.getElementById('delete-townhall').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await deleteTownhall();
-        });
-
-    }
-
-    const firstBtn = document.getElementById('first');
-    if (firstBtn) firstBtn.addEventListener('click', () => {
+        const data = await fetchTable('townhalls', params);
+        statePopulate(data);
+        updateRowCount(data.rowCount);
         setCurrentPage(1);
-        renderTownhallsPage();
-        setupPagination(renderTownhallsPage);
+        updateDisplay();
     });
 
-    const lastBtn = document.getElementById('last');
-    if (lastBtn) lastBtn.addEventListener('click', () => {
-        const last = getPagesNum();
-        setCurrentPage(last);
-        renderTownhallsPage();
-        setupPagination(renderTownhallsPage);
+    form.addEventListener('reset', async (ev) => {
+        ev.preventDefault();
+        await initTownhalls();
+    });
+
+    document.addEventListener('click', async (e) => {
+        const id = e.target.id;
+
+        if (id === 'new-townhall') await addTownhall();
+        if (id === 'edit-townhall') await editTownhall();
+        if (id === 'delete-townhall') await deleteTownhall();
+
+        if (id === 'first') {
+            setCurrentPage(1);
+            updateDisplay();
+        }
+
+        if (id === 'last') {
+            setCurrentPage(getPagesNum());
+            updateDisplay();
+        }
     });
 }
 
 export async function initTownhalls() {
     try {
         clearFields();
-        const data = await fetchTable('townhalls');
-        const stats = await fetchStats();
+        const [data, stats] = await Promise.all([
+            fetchTable('townhalls'),
+            fetchStats()
+        ]);
 
         statePopulate(data);
-        renderTownhallsPage();
-        setupPagination(renderTownhallsPage);
-
         document.getElementById('total-rows-count').textContent = stats.townhalls;
         updateRowCount(data.rowCount);
+        updateDisplay();
     } catch (err) {
         handleError(err);
     }
 }
 
-
-
 export function renderTownhallsPage() {
     const tbody = document.getElementById('table-tbody');
     if (!tbody) return;
-    tbody.innerHTML = '';
 
-    const rows = getRowsState();
+    const rows = getRowsState() || [];
     const start = (currentPage - 1) * rowsPerPage;
-    const pageRows = (rows || []).slice(start, start + rowsPerPage);
+    const pageRows = rows.slice(start, start + rowsPerPage);
 
-    for (const row of pageRows) {
+    const fragment = document.createDocumentFragment();
+    pageRows.forEach(row => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${row.id ?? ''}</td>
@@ -111,6 +96,9 @@ export function renderTownhallsPage() {
             <td>${row.municipality_id ?? ''}</td>
             <td>${row.townhall_center_id ?? ''}</td>
         `;
-        tbody.appendChild(tr);
-    }
+        fragment.appendChild(tr);
+    });
+
+    tbody.innerHTML = '';
+    tbody.appendChild(fragment);
 }
