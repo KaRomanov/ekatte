@@ -16,82 +16,85 @@
                 <li><a href="../regions/regions.html">Региони</a></li>
                 <li> <a href="../municipalities/municipalities.html">Общини</a> </li>
                 <li> <a href="../townhalls/townhalls.html">Кметства</a></li>
+                <li><a href="./settlements.html" class="active">Населени места</a></li>
             </ul>
         </nav>
     </div>
 
-    <div id="form-body">
-        <form id="search-form">
+    <div id="main-body">
+        <div id="form-body">
+            <form id="search-form">
 
-            <label>
-                ID:
-                <input type="text" name="id" id="id">
-            </label>
+                <label>
+                    ID:
+                    <input type="text" name="id" id="id">
+                </label>
 
-            <label>
-                Type:
-                <input type="text" name="type" id="type">
-            </label>
+                <label>
+                    Type:
+                    <input type="text" name="type" id="type">
+                </label>
 
-            <label>
-                Name (EN):
-                <input type="text" name="name_en" id="name_en">
-            </label>
+                <label>
+                    Name (EN):
+                    <input type="text" name="name_en" id="name_en">
+                </label>
 
-            <label>
-                Name (BG):
-                <input type="text" name="name_bg" id="name_bg">
-            </label>
+                <label>
+                    Name (BG):
+                    <input type="text" name="name_bg" id="name_bg">
+                </label>
 
-            <label>
-                Townhall ID:
-                <input type="text" name="townhall_id" id="townhall_id">
-            </label>
+                <label>
+                    Townhall ID:
+                    <input type="text" name="townhall_id" id="townhall_id">
+                </label>
 
-            <label>
-                Municipality ID:
-                <input type="text" name="municipality_id" id="municipality_id">
-            </label>
+                <label>
+                    Municipality ID:
+                    <input type="text" name="municipality_id" id="municipality_id">
+                </label>
 
-            <div class="button-row">
-                <button type="submit">Търси</button>
-                <button type="reset">Нулирай търсенето</button>
-                <button type="button" id="new-settlement">Добави</button>
-                <button type="button" id="edit-settlement">Редактирай</button>
-                <button type="button" id="delete-settlement">Изтрий</button>
-            </div>
-        </form>
-    </div>
-
-
-    <div id="stats-body">
-        <div class="stat-item">Брой селища: <span id="total-rows-count">0</span></div>
-        <div class="stat-item">Брой редове: <span id="rows-count">0</span></div>
-    </div>
+                <div class="button-row">
+                    <button type="submit">Търси</button>
+                    <button type="reset">Нулирай търсенето</button>
+                    <button type="button" id="new-settlement">Добави</button>
+                    <button type="button" id="edit-settlement">Редактирай</button>
+                    <button type="button" id="delete-settlement">Изтрий</button>
+                </div>
+            </form>
+        </div>
 
 
-    <div id="table-body">
-        <div id="table-error"></div>
-        <table id="table">
-            <thead>
-                <tr>
-                    <th data-key="id">ID</th>
-                    <th data-key="type">Type</th>
-                    <th data-key="name_en">Name (EN)</th>
-                    <th data-key="name_bg">Name (BG)</th>
-                    <th data-key="townhall_id">Townhall ID</th>
-                    <th data-key="municipality_id">Municipality ID</th>
-                </tr>
-            </thead>
-            <tbody id="table-tbody">
+        <div id="stats-body">
+            <div class="stat-item">Брой селища: <span id="total-rows-count">0</span></div>
+            <div class="stat-item">Брой редове: <span id="rows-count">0</span></div>
+        </div>
 
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination">
-        <button class="backward" id="first">First</button>
-        <div class="page-numbers" id="pageNumbers" data-current="1"></div>
-        <button class="forward" id="last">Last</button>
+
+        <div id="table-body">
+            <div id="table-error"></div>
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th data-key="id">ID</th>
+                        <th data-key="type">Type</th>
+                        <th data-key="name_en">Name (EN)</th>
+                        <th data-key="name_bg">Name (BG)</th>
+                        <th data-key="townhall_id">Townhall ID</th>
+                        <th data-key="municipality_id">Municipality ID</th>
+                    </tr>
+                </thead>
+                <tbody id="table-tbody">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button class="backward" id="first">First</button>
+            <div class="page-numbers" id="pageNumbers" data-current="1"></div>
+            <button class="forward" id="last">Last</button>
+        </div>
     </div>
 
 </body>

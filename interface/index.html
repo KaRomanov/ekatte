@@ -13,6 +13,7 @@
     <div id="crud-menu">
         <nav class="crud-menu">
             <ul class="menu">
+                <li><a href="./index.html" class="active">Main</a></li>
                 <li><a href="./pages/regions/regions.html">Области</a></li>
                 <li><a href="./pages/municipalities/municipalities.html">Общини</a></li>
                 <li> <a href="./pages/townhalls/townhalls.html">Кметства</a> </li>
@@ -21,76 +22,78 @@
         </nav>
     </div>
 
-    <div id="form-body">
-        <form id="search-form">
+    <div id="main-body">
+        <div id="form-body">
+            <form id="search-form">
 
-            <label>
-                Име на населено място:
-                <input type="text" name="town" id="town">
-            </label>
+                <label>
+                    Име на населено място:
+                    <input type="text" name="town" id="town">
+                </label>
 
-            <label>
-                Кметство:
-                <input type="text" name="townhall" id="townhall">
-            </label>
+                <label>
+                    Кметство:
+                    <input type="text" name="townhall" id="townhall">
+                </label>
 
-            <label>
-                Община:
-                <input type="text" name="municipality" id="municipality">
-            </label>
+                <label>
+                    Община:
+                    <input type="text" name="municipality" id="municipality">
+                </label>
 
-            <label>
-                Област:
-                <input type="text" name="region" id="region">
-            </label>
+                <label>
+                    Област:
+                    <input type="text" name="region" id="region">
+                </label>
 
-            <div class="button-row">
-                <button type="submit">Търси</button>
-                <button type="reset">Нулирай търсенето</button>
-            </div>
-        </form>
-    </div>
+                <div class="button-row">
+                    <button type="submit">Търси</button>
+                    <button type="reset">Нулирай търсенето</button>
+                </div>
+            </form>
+        </div>
 
 
-    <div id="stats-body">
-        <div class="stat-item">Брой редове: <span id="rows-count">0</span></div>
-        <div class="stat-item">Брой селища: <span id="towns-count">0</span></div>
-        <div class="stat-item">Брой кметства: <span id="townhalls-count">0</span></div>
-        <div class="stat-item">Брой общини: <span id="municipalities-count">0</span></div>
-        <div class="stat-item">Брой региони: <span id="regions-count">0</span></div>
+        <div id="stats-body">
+            <div class="stat-item">Брой редове: <span id="rows-count">0</span></div>
+            <div class="stat-item">Брой селища: <span id="towns-count">0</span></div>
+            <div class="stat-item">Брой кметства: <span id="townhalls-count">0</span></div>
+            <div class="stat-item">Брой общини: <span id="municipalities-count">0</span></div>
+            <div class="stat-item">Брой региони: <span id="regions-count">0</span></div>
 
-        <div class="stat-reports">
-            <button id="export-csv">Export CSV</button>
-            <button id="export-excel">Export Excel</button>
-            <div class="export-stats">
-                <span id="export-time"></span>
+            <div class="stat-reports">
+                <button id="export-csv">Export CSV</button>
+                <button id="export-excel">Export Excel</button>
+                <div class="export-stats">
+                    <span id="export-time"></span>
+                </div>
             </div>
         </div>
-    </div>
 
 
-    <div id="table-body">
-        <div id="table-error"></div>
-        <table id="table">
-            <thead>
-                <tr>
-                    <th data-key="id">ID (ekatte)</th>
-                    <th data-key="town">Селище</th>
-                    <th data-key="townhall">Кметство</th>
-                    <th data-key="municipality">Община</th>
-                    <th data-key="municipality_id">Код на общината</th>
-                    <th data-key="region">Област</th>
-                </tr>
-            </thead>
-            <tbody id="table-tbody">
+        <div id="table-body">
+            <div id="table-error"></div>
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th data-key="id">ID (ekatte)</th>
+                        <th data-key="town">Селище</th>
+                        <th data-key="townhall">Кметство</th>
+                        <th data-key="municipality">Община</th>
+                        <th data-key="municipality_id">Код на общината</th>
+                        <th data-key="region">Област</th>
+                    </tr>
+                </thead>
+                <tbody id="table-tbody">
 
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination">
-        <button class="backward" id="first">First</button>
-        <div class="page-numbers" id="pageNumbers"></div>
-        <button class="forward" id="last">Last</button>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button class="backward" id="first">First</button>
+            <div class="page-numbers" id="pageNumbers"></div>
+            <button class="forward" id="last">Last</button>
+        </div>
     </div>
 
 </body>
