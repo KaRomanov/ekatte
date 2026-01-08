@@ -1,5 +1,6 @@
 import { initRegions } from './page.js';
 import { addEntry, updateEntry, deleteEntry } from '../../components/api.js';
+import { handleError } from '../../ui/dom.js';
 
 
 export async function addRegion() {

@@ -1,5 +1,6 @@
 import { addEntry, deleteEntry, updateEntry } from "../../components/api.js";
 import { initSettlements } from "./page.js";
+import { handleError } from "../../ui/dom.js";
 
 
 export async function addSettlement() {

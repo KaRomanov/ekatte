@@ -1,5 +1,6 @@
 import { addEntry, updateEntry, deleteEntry } from "../../components/api.js";
 import { initTownhalls } from "./page.js";
+import { handleError } from "../../ui/dom.js";
 
 export async function addTownhall() {
     const params = {

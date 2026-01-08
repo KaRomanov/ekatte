@@ -1,5 +1,7 @@
 import { initMunicipalities } from "./page.js"
 import { addEntry, deleteEntry, updateEntry } from "../../components/api.js";
+import { handleError } from "../../ui/dom.js";
+
 
 export async function addMunicipality() {
 
