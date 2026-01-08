@@ -1,4 +1,4 @@
-import { showTime } from "../ui/dom.js";
+import { showStats } from "../ui/dom.js";
 
 
 export function exportCSV(rows) {
@@ -12,6 +12,24 @@ export function exportCSV(rows) {
     }
 
     const blob = new Blob([fileContent], { type: 'text/csv;charset=utf-8;' });
+
+    const t1 = performance.now();
+    const duration = parseFloat((t1 - t0).toFixed(2));
+
+    const rowsPerMs = duration > 0 ? (rows.length / duration).toFixed(2) : rows.length;
+
+    const fileSizeMB = (blob.size / (1024 * 1024)).toFixed(2);
+    const stringSizeKB = (fileContent.length * 2 / 1024).toFixed(2);
+
+    const stats = {
+        time: duration,
+        fileSizeMB: fileSizeMB,
+        memoryUsedKB: stringSizeKB,
+        throughput: rowsPerMs
+    };
+
+    showStats(stats);
+
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -20,10 +38,6 @@ export function exportCSV(rows) {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-
-    const t1 = performance.now();
-    const duration = (t1 - t0).toFixed(2)
-    showTime(duration);
 }
 
 
@@ -44,9 +58,21 @@ export function exportExcel(rows) {
     const wBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wBook, wSheet, 'Towns');
 
-    XLSX.writeFile(wBook, 'towns.xlsx');
-
     const t1 = performance.now();
-    const duration = (t1 - t0).toFixed(2)
-    showTime(duration);
+    const duration = parseFloat((t1 - t0).toFixed(2));
+
+    const rowsPerMs = duration > 0 ? (rows.length / duration).toFixed(2) : rows.length;
+
+    const rawJsonString = JSON.stringify(table);
+    const memoryUsedKB = (rawJsonString.length * 2 / 1024).toFixed(2);
+
+    const stats = {
+        time: duration,
+        memoryUsedKB: memoryUsedKB,
+        throughput: rowsPerMs
+    };
+
+    showStats(stats);
+
+    XLSX.writeFile(wBook, 'towns.xlsx');
 }

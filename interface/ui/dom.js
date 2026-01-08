@@ -37,14 +37,34 @@ export function clearFields() {
         errorDiv.style.display = 'none';
     }
     const exportTime = document.getElementById('export-time');
+    const sizeSpan = document.getElementById('export-file-size');
+    const memorySpan = document.getElementById('export-memory-used');
     if (exportTime) exportTime.textContent = '';
+    if (sizeSpan) sizeSpan.textContent = '';
+    if (memorySpan) memorySpan.textContent = '';
 }
 
 
-export function showTime(duration) {
-    const exportTimeSpan = document.getElementById('export-time');
-    if (exportTimeSpan) {
-        exportTimeSpan.textContent = `Export took ${duration} ms`;
+export function showStats(stats) {
+    const timeSpan = document.getElementById('export-time');
+    const sizeSpan = document.getElementById('export-file-size');
+    const memorySpan = document.getElementById('export-memory-used');
+    const throughputSpan = document.getElementById('export-throughput');
+
+    if (timeSpan && stats.time) {
+        timeSpan.textContent = `Time: ${stats.time} ms`;
+    }
+
+    if (sizeSpan && stats.fileSizeMB) {
+        sizeSpan.textContent = ` | File size: ${stats.fileSizeMB} MB`;
+    }
+
+    if (memorySpan && stats.memoryUsedKB) {
+        memorySpan.textContent = ` | Memory used: ${stats.memoryUsedKB} KB`;
+    }
+
+    if (throughputSpan && stats.throughput) {
+        throughputSpan.textContent = ` | Speed: ${stats.throughput} rows/ms`;
     }
 }
 
@@ -54,5 +74,5 @@ export default {
     updateRowCount,
     handleError,
     clearFields,
-    showTime
+    showStats
 };
