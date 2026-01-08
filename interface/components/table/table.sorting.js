@@ -9,7 +9,7 @@ export const getVal = (row, key) => {
 };
 
 
-export function applySort(sort = state.sortState) {
+export function applySort(sort = state.sortState, renderFn = renderPage) {
     if (!sort || sort.length === 0) return;
 
     state.allRows.sort((a, b) => {
@@ -22,8 +22,8 @@ export function applySort(sort = state.sortState) {
         return 0;
     });
 
-    renderPage();
-    setupPagination();
+    renderFn();
+    setupPagination(renderFn);
     updateSortIndicators();
 }
 
@@ -56,17 +56,17 @@ export function handleSortClick(currentSort, key, isShift = false) {
 }
 
 
-export function triggerSort(key, isShift = false) {
+export function triggerSort(key, isShift = false, renderFn) {
     const current = state.getSortState();
     const next = handleSortClick(current, key, isShift);
     updateSortIndicators(next);
     state.setSortState(next);
-    applySort(next);
+    applySort(next, renderFn);
 }
 
-export function initSorting() {
+export function initSorting(renderFn = renderPage) {
     document.querySelectorAll('th[data-key]').forEach(th => {
-        th.addEventListener('click', (e) => triggerSort(th.dataset.key, e.shiftKey));
+        th.addEventListener('click', (e) => triggerSort(th.dataset.key, e.shiftKey, renderFn));
     });
 }
 
