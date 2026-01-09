@@ -244,13 +244,28 @@ th[data-key] {
 }
 
 th.sorted-asc::after {
-    content: " +";
-    font-size: 14px;
+    content: " ▲";
+    font-size: 13px;
 }
 
 th.sorted-desc::after {
-    content: " -";
-    font-size: 14px;
+    content: " ▼";
+    font-size: 13px;
+}
+
+th[data-sort-order]::before {
+    content: attr(data-sort-order);
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    vertical-align: middle;
 }
 
 

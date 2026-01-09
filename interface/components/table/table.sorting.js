@@ -29,11 +29,20 @@ export function applySort(sort = state.sortState, renderFn = renderPage) {
 
 
 export function updateSortIndicators(sort = state.sortState) {
-    document.querySelectorAll('th[data-key]').forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
-    for (const { key, dir } of sort) {
+    const allHeaders = document.querySelectorAll('th[data-key]');
+
+    allHeaders.forEach(th => {
+        th.classList.remove('sorted-asc', 'sorted-desc');
+        th.removeAttribute('data-sort-order');
+    });
+
+    sort.forEach(({ key, dir }, index) => {
         const th = document.querySelector(`th[data-key="${key}"]`);
-        if (th) th.classList.add(`sorted-${dir}`);
-    }
+        if (th) {
+            th.classList.add(`sorted-${dir}`);
+            th.setAttribute('data-sort-order', index + 1);
+        }
+    })
 }
 
 
