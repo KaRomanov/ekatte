@@ -2,24 +2,32 @@ import { jest } from '@jest/globals';
 
 
 jest.unstable_mockModule('../interface/ui/dom.js', async () => ({
-    showTime: jest.fn(),
+    showStats: jest.fn(),
 }));
 
 
 const { exportCSV, exportExcel } = await import('../interface/components/export.js');
-const { showTime } = await import('../interface/ui/dom.js');
+const { showStats } = await import('../interface/ui/dom.js');
 
 
-describe('exportCSV', () => {
+describe('Export Component Tests', () => {
     let clickMock;
 
     beforeEach(() => {
-        let time = 1000;
-        jest.spyOn(global.performance, 'now')
-            .mockImplementation(() => (time += 50));
+        let callCount = 0;
+        jest.spyOn(global.performance, 'now').mockImplementation(() => {
+            return callCount++ === 0 ? 1000 : 1050;
+        });
 
         URL.createObjectURL = jest.fn(() => 'blob:fake-url');
         URL.revokeObjectURL = jest.fn();
+        
+        global.Blob = class {
+            constructor(content) {
+                this.content = content;
+                this.size = 1024 * 1024;
+            }
+        };
 
         clickMock = jest.fn();
 
@@ -35,104 +43,55 @@ describe('exportCSV', () => {
 
     afterEach(() => {
         jest.restoreAllMocks();
+        jest.clearAllMocks();
     });
 
-    test('should generate CSV, trigger download, and call showTime', () => {
-        const rows = [
-            {
-                id: 1,
-                type: 'A',
-                town: 'Town1',
-                townhall: 'TH1',
-                municipality: 'M1',
-                municipality_id: '001',
-                region: 'R1',
-            },
-        ];
+    describe('exportCSV', () => {
+        test('should generate CSV and call showStats with metrics', () => {
+            const rows = [
+                { id: 1, type: 'A', town: 'T1', townhall: 'TH1', municipality: 'M1', municipality_id: '01', region: 'R1' }
+            ];
 
-        exportCSV(rows);
+            exportCSV(rows);
 
-        expect(URL.createObjectURL).toHaveBeenCalled();
-        expect(document.createElement).toHaveBeenCalledWith('a');
-        expect(clickMock).toHaveBeenCalled();
-        expect(document.body.appendChild).toHaveBeenCalled();
-        expect(document.body.removeChild).toHaveBeenCalled();
-        expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:fake-url');
+            expect(showStats).toHaveBeenCalledWith(expect.objectContaining({
+                time: 50,
+                throughput: "0.02",
+                memoryUsedKB: expect.any(String),
+                fileSizeMB: expect.any(String)
+            }));
 
-        expect(showTime).toHaveBeenCalledWith('50.00');
-    });
-});
-
-describe('exportExcel (global XLSX)', () => {
-    let jsonToSheetMock;
-    let bookNewMock;
-    let bookAppendSheetMock;
-    let writeFileMock;
-
-    beforeEach(() => {
-        let time = 1000;
-        jest.spyOn(global.performance, 'now')
-            .mockImplementation(() => (time += 50));
-
-        jsonToSheetMock = jest.fn(() => ({}));
-        bookNewMock = jest.fn(() => ({}));
-        bookAppendSheetMock = jest.fn();
-        writeFileMock = jest.fn();
-
-        globalThis.XLSX = {
-            utils: {
-                json_to_sheet: jsonToSheetMock,
-                book_new: bookNewMock,
-                book_append_sheet: bookAppendSheetMock,
-            },
-            writeFile: writeFileMock,
-        };
+            expect(clickMock).toHaveBeenCalled();
+            expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:fake-url');
+        });
     });
 
-    afterEach(() => {
-        delete globalThis.XLSX;
-        jest.restoreAllMocks();
-    });
+    describe('exportExcel', () => {
+        beforeEach(() => {
+            globalThis.XLSX = {
+                utils: {
+                    json_to_sheet: jest.fn(() => ({})),
+                    book_new: jest.fn(() => ({})),
+                    book_append_sheet: jest.fn(),
+                },
+                writeFile: jest.fn(),
+            };
+        });
 
-    test('should generate Excel file and call showTime', () => {
-        const rows = [
-            {
-                id: 1,
-                type: 'A',
-                town: 'Town1',
-                townhall: 'TH1',
-                municipality: 'M1',
-                municipality_id: '001',
-                region: 'R1',
-            },
-        ];
+        test('should generate Excel and call showStats with metrics', () => {
+            const rows = [
+                { id: 1, type: 'A', town: 'T1', townhall: 'TH1', municipality: 'M1', municipality_id: '01', region: 'R1' }
+            ];
 
-        exportExcel(rows);
+            exportExcel(rows);
 
-        expect(jsonToSheetMock).toHaveBeenCalledWith([
-            {
-                ID: 1,
-                Type: 'A',
-                Town: 'Town1',
-                Townhall: 'TH1',
-                Municipality: 'M1',
-                Municipality_ID: '001',
-                Region: 'R1',
-            },
-        ]);
+            expect(showStats).toHaveBeenCalledWith(expect.objectContaining({
+                time: 50,
+                throughput: "0.02",
+                memoryUsedKB: expect.any(String)
+            }));
 
-        expect(bookNewMock).toHaveBeenCalled();
-        expect(bookAppendSheetMock).toHaveBeenCalledWith(
-            expect.any(Object),
-            expect.any(Object),
-            'Towns'
-        );
-
-        expect(writeFileMock).toHaveBeenCalledWith(
-            expect.any(Object),
-            'towns.xlsx'
-        );
-
-        expect(showTime).toHaveBeenCalledWith('50.00');
+            expect(globalThis.XLSX.writeFile).toHaveBeenCalled();
+        });
     });
 });

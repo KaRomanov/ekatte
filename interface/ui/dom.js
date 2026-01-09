@@ -51,6 +51,10 @@ export function showStats(stats) {
     const memorySpan = document.getElementById('export-memory-used');
     const throughputSpan = document.getElementById('export-throughput');
 
+    [timeSpan, sizeSpan, memorySpan, throughputSpan].forEach(span => {
+        if (span) span.textContent = '';
+    });
+
     if (timeSpan && stats.time) {
         timeSpan.textContent = `Time: ${stats.time} ms`;
     }

@@ -1,6 +1,6 @@
 import { jest } from '@jest/globals';
 
-import { getVal, updateSortIndicators, handleSortClick } from '../interface/components/table/table.sorting.js';
+import { getVal, updateSortIndicators } from '../interface/components/table/table.sorting.js';
 import * as state from '../interface/components/table/table.state.js';
 import { getPagesNum } from '../interface/components/table/table.state.js';
 
@@ -121,4 +121,5 @@ describe('updateSortIndicators', () => {
         expect(thTown.classList.contains('sorted-desc')).toBe(true);
         expect(thRegion.className).toBe('');
     });
+    
 });

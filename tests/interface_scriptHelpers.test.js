@@ -2,7 +2,7 @@ import { jest } from '@jest/globals';
 
 import {
     addRowCounts, updateRowCount,
-    handleError, clearFields, showTime
+    handleError, clearFields, showStats
 } from '../interface/ui/dom.js';
 
 describe('DOM manipulation functions', () => {
@@ -18,6 +18,9 @@ describe('DOM manipulation functions', () => {
                 <tbody id="table-tbody"></tbody>
             </table>
             <div id="export-time"></div>
+            <div id="export-file-size"></div>
+            <div id="export-memory-used"></div>
+            <div id="export-throughput"></div>
         `;
     });
 
@@ -94,17 +97,43 @@ describe('DOM manipulation functions', () => {
     });
 });
 
-describe('showTime', () => {
-    test('should write formatted export time', () => {
-        showTime('12.34');
+describe('showStats', () => {
+    test("should update all spans when all stats are provided", () => {
+        const stats = {
+            time: "150.50",
+            fileSizeMB: "1.25",
+            memoryUsedKB: "2500",
+            throughput: "33.33"
+        };
 
-        const exportTime = document.getElementById('export-time');
-        expect(exportTime.textContent).toBe('Export took 12.34 ms');
+        showStats(stats);
+
+        expect(document.getElementById('export-time').textContent).toBe("Time: 150.50 ms");
+        expect(document.getElementById('export-file-size').textContent).toBe(" | File size: 1.25 MB");
+        expect(document.getElementById('export-memory-used').textContent).toBe(" | Memory used: 2500 KB");
+        expect(document.getElementById('export-throughput').textContent).toBe(" | Speed: 33.33 rows/ms");
     });
 
-    test('should not throw if export-time element does not exist', () => {
-        document.getElementById('export-time').remove();
+    test("should only update existing values and not crash if some stats are missing", () => {
+        const stats = {
+            time: 50.00,
+            throughput: "100"
+        };
 
-        expect(() => showTime('5')).not.toThrow();
+        showStats(stats);
+
+        expect(document.getElementById('export-time').textContent).toBe("Time: 50 ms");
+        expect(document.getElementById('export-throughput').textContent).toBe(" | Speed: 100 rows/ms");
+
+        expect(document.getElementById('export-file-size').textContent).toBe("");
+        expect(document.getElementById('export-memory-used').textContent).toBe("");
+    });
+
+    test("should not throw an error if DOM elements are missing", () => {
+        document.body.innerHTML = "";
+
+        const stats = { time: "10" };
+
+        expect(() => showStats(stats)).not.toThrow();
     });
 });
