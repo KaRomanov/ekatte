@@ -14,15 +14,15 @@ export const populateDB = async () => {
         await client.query('SET CONSTRAINTS ALL DEFERRED');
 
         console.log('Clearing tables...');
-        await client.query('TRUNCATE towns, townhalls, municipalities, regions;');
+        await client.query('TRUNCATE regions, municipalities, townhalls, towns');
 
         console.log('Inserting regions');
         await insertRegions(client);
-        console.log('Regions inserted!')
+        console.log('Regions inserted!');
 
         console.log('Inserting municipalities');
         await insertMunicipalities(client);
-        console.log('Municipalities inserted!')
+        console.log('Municipalities inserted!');
 
         console.log('Inserting townhalls');
         await insertTownhalls(client);
