@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../style.css">
+    <script type="module" src="./script.js" defer></script>
+    <title>Townhalls</title>
+</head>
+
+<body>
+
+    <div id="crud-menu">
+        <nav class="crud-menu">
+            <ul class="menu">
+                <li><a href="../../index.html">Главна страница</a></li>
+                <li><a href="../regions/regions.html">Региони</a></li>
+                <li> <a href="../municipalities/municipalities.html">Общини</a> </li>
+                <li><a href="./townhalls.html" class="active">Кметства</a></li>
+                <li> <a href="../settlements/settlements.html">Населени места</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="main-body">
+        <div id="form-body">
+            <form id="search-form">
+
+                <label>
+                    ID:
+                    <input type="text" name="id" id="id">
+                </label>
+
+                <label>
+                    Name (EN):
+                    <input type="text" name="name_en" id="name_en">
+                </label>
+
+                <label>
+                    Name (BG):
+                    <input type="text" name="name_bg" id="name_bg">
+                </label>
+                <label>
+                    Municipality ID:
+                    <input type="text" name="municipality_id" id="municipality_id">
+                </label>
+
+                <label>
+                    Townhall center (ekatte):
+                    <input type="text" name="townhall_center_id" id="townhall_center_id">
+                </label>
+
+                <div class="button-row">
+                    <button type="submit">Търси</button>
+                    <button type="reset">Нулирай търсенето</button>
+                    <button type="button" id="new-townhall">Добави</button>
+                    <button type="button" id="edit-townhall">Редактирай</button>
+                    <button type="button" id="delete-townhall">Изтрий</button>
+                </div>
+            </form>
+        </div>
+
+
+        <div id="stats-body">
+            <div class="stat-item">Брой кметства: <span id="total-rows-count">0</span></div>
+            <div class="stat-item">Брой редове: <span id="rows-count">0</span></div>
+        </div>
+
+
+        <div id="table-body">
+            <div id="table-error"></div>
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th data-key="id">ID</th>
+                        <th data-key="name_en">Name (EN)</th>
+                        <th data-key="name_bg">Name (BG)</th>
+                        <th data-key="municipality_id">Municipality ID</th>
+                        <th data-key="townhall_center_id">Townhall center (ekatte)</th>
+                    </tr>
+                </thead>
+                <tbody id="table-tbody">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <button class="backward" id="first">First</button>
+            <div class="page-numbers" id="pageNumbers" data-current="1"></div>
+            <button class="forward" id="last">Last</button>
+        </div>
+    </div>
+
+</body>
+
+</html>
